@@ -1,0 +1,1 @@
+{"version":3,"file":"ScoreManager.js","sourceRoot":"","sources":["../../src/logic/ScoreManager.ts"],"names":[],"mappings":"AAAA,MAAM,OAAO,YAAY;IACrB,MAAM,CAAC,oBAAoB;QACvB,OAAO,EAAE,CAAC;IACd,CAAC;IAED,MAAM,CAAC,oBAAoB;QACvB,OAAO,GAAG,CAAC;IACf,CAAC;IAED,MAAM,CAAC,2BAA2B;QAC9B,OAAO,EAAE,CAAC;IACd,CAAC;IAED,MAAM,CAAC,sBAAsB;QACzB,OAAO,GAAG,CAAC;IACf,CAAC;CACJ"}

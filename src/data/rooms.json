@@ -1,0 +1,181 @@
+{
+  "rooms": [
+    {
+      "id": "magic-forest",
+      "name": "🌳 Der verzauberte Zauberwald",
+      "description": "Finde den Weg durch das magische Dickicht voller Geheimnisse!",
+      "difficulties": {
+        "easy": [
+          {
+            "id": "p1",
+            "name": "Das Tor der Glyphen",
+            "type": "sequence",
+            "task": "Klicke die Runen in der Reihenfolge des Regenbogens an: Rot, Gelb, Blau.",
+            "hints": ["Erinnere dich an die klassischen Regenbogenfarben von oben nach unten!"],
+            "solution": ["red", "yellow", "blue"]
+          },
+          {
+            "id": "p2",
+            "name": "Die Zahlen-Eule",
+            "type": "input_number",
+            "task": "Nimm die Anzahl der geklickten Runen aus dem ersten Rätsel und verdopple sie!",
+            "hints": ["Im 1. Rätsel hast du genau 3 Runen angeklickt."],
+            "solution": "6"
+          },
+          {
+            "id": "p3",
+            "name": "Das Wortschloss",
+            "type": "input_text",
+            "task": "Gib das Zauberwort ein. Tipp: Es lautet MAGIE gefolgt von dem Ergebnis aus Rätsel 2.",
+            "hints": ["Schreibe das Wort 'MAGIE' und direkt dahinter die Zahl 6."],
+            "solution": "MAGIE6"
+          }
+        ],
+        "hard": [
+          {
+            "id": "ph1",
+            "name": "Das Meister-Runentor",
+            "type": "sequence",
+            "task": "Klicke die Tasten in exakter Reihenfolge: Grün, Rot, Blau, Gelb.",
+            "hints": ["Starte mit der Farbe des frischen Grases."],
+            "solution": ["green", "red", "blue", "yellow"]
+          },
+          {
+            "id": "ph2",
+            "name": "Rätsel der uralten Eule",
+            "type": "input_number",
+            "task": "Multipliziere die Anzahl der Tasten aus Rätsel 1 mit 15.",
+            "hints": ["Es waren 4 Tasten in Rätsel 1. Rechne 4 * 15."],
+            "solution": "60"
+          },
+          {
+            "id": "ph3",
+            "name": "Das magische Kryptogramm",
+            "type": "input_text",
+            "task": "Gib das ultimative Passwort ein: HEXEN gefolgt von der Zahl aus Rätsel 2.",
+            "hints": ["Das Wort lautet HEXEN und die Zahl war 60."],
+            "solution": "HEXEN60"
+          }
+        ]
+      }
+    },
+    {
+      "id": "underwater",
+      "name": "🌊 Unterwasser-Abenteuer",
+      "description": "Tauche hinab und berge den verlorenen Piraten-Schatz!",
+      "difficulties": {
+        "easy": [
+          {
+            "id": "u1",
+            "name": "Die Muschel-Kette",
+            "type": "sequence",
+            "task": "Klicke die Muscheln in dieser Farbfolge: Rosa, Blau, Rosa.",
+            "hints": ["Achte auf das Muster: Erst Rosa, dann Blau, dann wieder Rosa."],
+            "solution": ["pink", "blue", "pink"]
+          },
+          {
+            "id": "u2",
+            "name": "Der Oktopus-Arm",
+            "type": "input_number",
+            "task": "Wie viele Muscheln hast du im ersten Rätsel berührt? Multipliziere diese Zahl mit 4.",
+            "hints": ["Du hast 3 Muscheln angeklickt. 3 * 4 = ?"],
+            "solution": "12"
+          },
+          {
+            "id": "u3",
+            "name": "Die Schatzkiste",
+            "type": "input_text",
+            "task": "Öffne das Schloss mit dem Wort SCHATZ und der Zahl aus Rätsel 2.",
+            "hints": ["Das Lösungswort ist SCHATZ12"],
+            "solution": "SCHATZ12"
+          }
+        ],
+        "hard": [
+          {
+            "id": "uh1",
+            "name": "Der Kraken-Tanz",
+            "type": "sequence",
+            "task": "Klicke die Symbole in dieser Reihenfolge: Blau, Pink, Blau, Gelb.",
+            "hints": ["Vier Farben insgesamt. Beginne mit Blau."],
+            "solution": ["blue", "pink", "blue", "yellow"]
+          },
+          {
+            "id": "uh2",
+            "name": "Perlen-Mathematik",
+            "type": "input_number",
+            "task": "Nimm die Anzahl der Farben aus Rätsel 1 und rechne hoch: hoch 3 (also 4 * 4 * 4 - 4).",
+            "hints": ["Es waren 4 Tasten. 64 minus 4."],
+            "solution": "60"
+          },
+          {
+            "id": "uh3",
+            "name": "Königliche Schatztruhe",
+            "type": "input_text",
+            "task": "Passwort eingeben: PIRAT gefolgt von der Zahl aus Rätsel 2.",
+            "hints": ["PIRAT60"],
+            "solution": "PIRAT60"
+          }
+        ]
+      }
+    },
+    {
+      "id": "space",
+      "name": "🚀 Weltraum-Station",
+      "description": "Repariere den Roboter und rette die Mission im All!",
+      "difficulties": {
+        "easy": [
+          {
+            "id": "s1",
+            "name": "Sternen-Check",
+            "type": "sequence",
+            "task": "Klicke die Lichter in der Reihenfolge: Gelb, Rot.",
+            "hints": ["Nur zwei Schritte: Erst Gelb, dann Rot."],
+            "solution": ["yellow", "red"]
+          },
+          {
+            "id": "s2",
+            "name": "Roboter-Energie",
+            "type": "input_number",
+            "task": "Nimm die Anzahl der Lichter und multipliziere sie mit 50.",
+            "hints": ["Es waren 2 Lichter. 2 * 50 = ?"],
+            "solution": "100"
+          },
+          {
+            "id": "s3",
+            "name": "Hauptrechner-Code",
+            "type": "input_text",
+            "task": "Gib den Code ein: START plus das Ergebnis aus Rätsel 2.",
+            "hints": ["START100"],
+            "solution": "START100"
+          }
+        ],
+        "hard": [
+          {
+            "id": "sh1",
+            "name": "Hyper-Antrieb Start",
+            "type": "sequence",
+            "task": "Klicke in Reihenfolge: Rot, Gelb, Blau, Grün.",
+            "hints": ["Vier Tasten zur Aktivierung."],
+            "solution": ["red", "yellow", "blue", "green"]
+          },
+          {
+            "id": "sh2",
+            "name": "Schild-Energie",
+            "type": "input_number",
+            "task": "Multipliziere die Anzahl der Tasten aus Rätsel 1 mit 25.",
+            "hints": ["4 Tasten * 25."],
+            "solution": "100"
+          },
+          {
+            "id": "sh3",
+            "name": "Galaktisches Haupttor",
+            "type": "input_text",
+            "task": "Passwort: GALAXY gefolgt von der Zahl aus Rätsel 2.",
+            "hints": ["GALAXY100"],
+            "solution": "GALAXY100"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "name": "escaperoom",
+  "version": "1.0.0",
+  "description": "Interaktive Rätsel-Website für Kinder",
+  "main": "dist/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "lite-server",
+    "watch": "tsc -w",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "lite-server": "^2.6.1"
+  },
+  "dependencies": {
+    "dev-server": "^0.2.0",
+    "typescript": "^7.0.2"
+  }
+}
