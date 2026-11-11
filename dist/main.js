@@ -1,41 +1,67 @@
 import { UIRenderer } from './ui/UIRenderer.js';
 class GameController {
     renderer;
-    roomsData = null; // Storage for the rooms data loaded from JSON
+    roomsData = null;
+    // new game state
+    currentRoom = null;
+    currentDifficulty = 'easy';
+    currentPuzzleIndex = 0;
     constructor() {
         this.renderer = new UIRenderer('app');
     }
     async init() {
-        console.log("Inside GameController.init() - Loading rooms.json...");
         try {
-            // Load the rooms.json file - only works if served via a server (like Live Server), not directly from the filesystem
             const response = await fetch('./src/data/rooms.json');
-            if (!response.ok) {
-                throw new Error("Network error while loading rooms.json");
-            }
+            if (!response.ok)
+                throw new Error("Konnte rooms.json nicht laden");
             const data = await response.json();
-            this.roomsData = data.rooms; // store rooms data
-            // Create a summary of rooms for the start screen containing only id and name
+            this.roomsData = data.rooms;
             const roomSummaries = this.roomsData.map((room) => ({
                 id: room.id,
                 name: room.name
             }));
-            // Render the start screen with the room summaries and a callback for when the game starts
             this.renderer.renderStartScreen(roomSummaries, (name, roomId, difficulty) => {
                 this.startGame(name, roomId, difficulty);
             });
         }
         catch (error) {
-            console.error("Error:", error);
-            alert("Error while loading rooms.json. Is your Live Server running?");
+            console.error("Fehler:", error);
+            alert("Fehler beim Laden von rooms.json. Läuft dein Live Server?");
         }
     }
     startGame(name, roomId, difficulty) {
-        console.log(`Gestartet! Spieler: ${name}, Raum-ID: ${roomId}, Modus: ${difficulty}`);
-        // Test: Find the selected room from the loaded rooms data
-        const selectedRoom = this.roomsData.find((r) => r.id === roomId);
-        console.log("Gewählter Raum:", selectedRoom);
-        // Continue with the game logic here, e.g., rendering the first puzzle, etc.
+        console.log(`Spieler: ${name} gestartet im Raum: ${roomId} (${difficulty})`);
+        // store room and difficulty level
+        this.currentRoom = this.roomsData.find((r) => r.id === roomId);
+        this.currentDifficulty = difficulty;
+        this.currentPuzzleIndex = 0; // begin with 1st puzzle (index: 0)
+        // load first puzzle
+        this.loadCurrentPuzzle();
+    }
+    loadCurrentPuzzle() {
+        // fetch puzzle list for selected difficulty level
+        const puzzles = this.currentRoom.difficulties[this.currentDifficulty];
+        // check if all puzzles of current room are solved
+        if (this.currentPuzzleIndex >= puzzles.length) {
+            alert("🎉 Wow! Du hast alle Rätsel in diesem Raum gelöst!");
+            this.init(); // back to start screen
+            return;
+        }
+        const currentPuzzle = puzzles[this.currentPuzzleIndex];
+        // pass to renderer
+        this.renderer.renderPuzzle(currentPuzzle, (answer) => this.checkAnswer(answer, currentPuzzle), () => { console.log("Hinweis wurde angefordert"); });
+    }
+    checkAnswer(userAnswer, puzzle) {
+        // check answer, ignore character case, remove spaces
+        const isCorrect = userAnswer.trim().toUpperCase() === puzzle.solution.toUpperCase();
+        if (isCorrect) {
+            alert("✅ Richtig! Super gemacht!");
+            this.currentPuzzleIndex++; // jump to next puzzle
+            this.loadCurrentPuzzle();
+        }
+        else {
+            alert("❌ Leider falsch. Probier es noch einmal!");
+        }
     }
 }
 // Start Game

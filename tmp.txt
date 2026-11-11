@@ -1,0 +1,466 @@
+*** Ich-Anfang
+Ich habe index.ts nach main.ts umbenannt.
+Da ich den Code im Detail verstehen will, habe ich die Initialisierung vereinfacht und Mechanismen verwendet, die ich verstehe.
+So sieht main.ts aktuell aus:
+import { UIRenderer } from './ui/UIRenderer.js';
+
+
+class GameController {
+    private renderer;
+
+    constructor() {
+        this.renderer = new UIRenderer('app');
+    }
+
+    public init() {
+        console.log("Ich bin in main.ts!");
+        this.renderer.renderStartScreen(() => {});
+    }
+}
+
+
+// Spiel starten
+const gameController = new GameController();
+gameController.init();
+
+UIRenderer.ts sieht so aus:
+export class UIRenderer {
+  private appContainer: HTMLElement;
+
+  constructor(containerId: string) {
+    this.appContainer = document.getElementById(containerId)!;
+  }
+
+  renderStartScreen(onStart: (name: string, roomId: string, difficulty: string) => void) {
+    this.appContainer.innerHTML = `
+      <div class="text-center">
+        <h1 class="text-primary fw-bold mb-4">🧩 Kids Escape Room</h1>
+        <p class="text-muted mb-4">Wähle deinen Namen, deinen Raum und den Schwierigkeitsgrad!</p>
+
+        <form id="start-form">
+          <div class="mb-3 text-start">
+            <label class="form-label fw-bold">Dein Name:</label>
+            <input type="text" id="player-name" class="form-control form-control-lg" required placeholder="z.B. Isabella, Alexandra oder Henry">
+          </div>
+
+          <div class="mb-3 text-start">
+            <label class="form-label fw-bold">Wähle einen Raum:</label>
+            <select id="room-select" class="form-select form-select-lg">
+              <option value="magic-forest">🌳 Der verzauberte Zauberwald</option>
+              <option value="underwater">🌊 Unterwasser-Abenteuer</option>
+              <option value="space">🚀 Weltraum-Station</option>
+            </select>
+          </div>
+
+          <div class="mb-4 text-start">
+            <label class="form-label fw-bold">Schwierigkeitsgrad:</label>
+            <select id="difficulty-select" class="form-select form-select-lg">
+              <option value="easy">Leicht (Für Einsteiger)</option>
+              <option value="hard">Schwer (Für Profis)</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-kid btn-lg w-100 shadow">Abenteuer starten! 🚀</button>
+        </form>
+      </div>
+    `;
+
+    document.getElementById('start-form')!.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = (document.getElementById('player-name') as HTMLInputElement).value;
+      const roomId = (document.getElementById('room-select') as HTMLSelectElement).value;
+      const difficulty = (document.getElementById('difficulty-select') as HTMLSelectElement).value;
+      onStart(name, roomId, difficulty);
+    });
+  }
+}
+
+Der Code funktioniert bis hierher: Der Startscreen wird angezeigt.
+Diese Zeile wurde mir von einer KI berichtigt:
+this.renderer.renderStartScreen(() => {});
+
+Warum ist die Aufrufsyntax so, wie sie ist?
+Ist OnStart ein Object?
+*** Ich-Ende
+
+*** Gemini-Anfang
+Nein, `onStart` ist **kein Objekt**, sondern eine **Funktion** (genauer gesagt eine sogenannte **Callback-Funktion**).
+
+In JavaScript und TypeScript sind Funktionen sogenannte *First-Class Citizens*. Das bedeutet, dass man Funktionen genau wie Variablen, Zahlen oder Strings **als Parameter an andere Funktionen übergeben** kann.
+
+Hier ist die genaue Erklärung, warum diese Syntax so aussieht und wie sie funktioniert:
+
+### 1. Die Typdefinition in `UIRenderer.ts`
+
+In der Methode `renderStartScreen` sagst du dem TypeScript-Compiler, welchen Typ der Parameter haben muss:
+
+```typescript
+renderStartScreen(onStart: (name: string, roomId: string, difficulty: string) => void)
+
+```
+
+Das bedeutet:
+
+* `onStart` ist der Name des Parameters.
+* `(name: string, roomId: string, difficulty: string) => void` beschreibt die **Signatur** der erwarteten Funktion: Sie nimmt drei Parameter entgegen (Name, Raum-ID, Schwierigkeitsgrad) und gibt nichts zurück (`void`).
+
+### 2. Der Aufruf in `main.ts`
+
+Wenn du `renderStartScreen` aufrufst, übergibst du dieser Methode ein Stück ausführbaren Code (eine anonyme Funktion bzw. einen Arrow-Function-Ausdruck), das genau dann aufgerufen werden soll, wenn der Benutzer im Startbildschirm auf den Absende-Button klickt:
+
+```typescript
+this.renderer.renderStartScreen((name, roomId, difficulty) => {
+    // Dieser Code wird erst ausgeführt, wenn das Formular abgeschickt wird!
+    console.log("Gestartet mit:", name, roomId, difficulty);
+});
+
+```
+
+### 3. Warum macht man das so? (Trennung von Logik und UI)
+
+Das ist das Kernstück der sauberen Architektur (**Trennung von UI und Spiel-Logik**):
+
+* Der `UIRenderer` kümmert sich nur um das HTML, liest die Eingabefelder aus und kriegt von außen eine Funktion (`onStart`) reingereicht. Er muss **nicht wissen**, was danach passiert (z. B. ob ein Timer startet oder wie das Spiel initialisiert wird).
+* Der `GameController` (in `main.ts`) bestimmt hingegen, *was* passieren soll, wenn der Start-Button gedrückt wird, hält sich aber komplett aus dem HTML-Code heraus.
+
+Möchtest du, dass wir als Nächstes die Raum-Daten aus der JSON-Datei laden und anbinden?
+*** Gemini-Ende
+
+*** Ich-Anfang
+Ja, bitte!
+*** Ich-Ende
+
+*** Gemini-Anfang
+Um die `rooms.json` sauber einzubinden und gleichzeitig deine gewünschte Architektur (Trennung von Logik und UI) beizubehalten, machen wir zwei kleine, elegante Anpassungen:
+
+1. **`main.ts`** lädt die JSON-Datei asynchron über `fetch` und holt sich die Raumdaten.
+2. **`UIRenderer.ts`** wird so erweitert, dass es die Räume **dynamisch** in das Dropdown-Menü einfügt, anstatt sie statisch im HTML zu hardcoden. Das ist besonders praktisch, wenn du später mal einen vierten Raum hinzufügen möchtest!
+
+---
+
+### 🛠️ 1. Anpassung in `src/ui/UIRenderer.ts`
+
+Wir übergeben der Methode `renderStartScreen` nun ein Array mit den verfügbaren Räumen, die dort per JavaScript in HTML-Optionen umgewandelt werden:
+
+```typescript
+export class UIRenderer {
+  private appContainer: HTMLElement;
+
+  constructor(containerId: string) {
+    this.appContainer = document.getElementById(containerId)!;
+  }
+
+  // Wir nehmen jetzt ein Array von Räumen als ersten Parameter entgegen
+  renderStartScreen(rooms: Array<{ id: string; name: string }>, onStart: (name: string, roomId: string, difficulty: string) => void) {
+
+    // Erstelle die <option>-Tags dynamisch aus den JSON-Daten
+    const roomOptionsHtml = rooms
+      .map(room => `<option value="${room.id}">${room.name}</option>`)
+      .join('');
+
+    this.appContainer.innerHTML = `
+      <div class="text-center">
+        <h1 class="text-primary fw-bold mb-4">🧩 Kids Escape Room</h1>
+        <p class="text-muted mb-4">Wähle deinen Namen, deinen Raum und den Schwierigkeitsgrad!</p>
+
+        <form id="start-form">
+          <div class="mb-3 text-start">
+            <label class="form-label fw-bold">Dein Name:</label>
+            <input type="text" id="player-name" class="form-control form-control-lg" required placeholder="z.B. Isabella, Alexandra oder Henry">
+          </div>
+
+          <div class="mb-3 text-start">
+            <label class="form-label fw-bold">Wähle einen Raum:</label>
+            <select id="room-select" class="form-select form-select-lg">
+              ${roomOptionsHtml}
+            </select>
+          </div>
+
+          <div class="mb-4 text-start">
+            <label class="form-label fw-bold">Schwierigkeitsgrad:</label>
+            <select id="difficulty-select" class="form-select form-select-lg">
+              <option value="easy">Leicht (Für Einsteiger)</option>
+              <option value="hard">Schwer (Für Profis)</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-kid btn-lg w-100 shadow">Abenteuer starten! 🚀</button>
+        </form>
+      </div>
+    `;
+
+    document.getElementById('start-form')!.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = (document.getElementById('player-name') as HTMLInputElement).value;
+      const roomId = (document.getElementById('room-select') as HTMLSelectElement).value;
+      const difficulty = (document.getElementById('difficulty-select') as HTMLSelectElement).value;
+      onStart(name, roomId, difficulty);
+    });
+  }
+}
+
+```
+
+---
+
+### 🧠 2. Anpassung in `src/main.ts`
+
+Hier nutzen wir `async/await`, um die JSON-Datei zu laden. Der `GameController` speichert die Rohdaten in einer Eigenschaft (`this.roomsData`), damit wir später im Spielverlauf leicht auf die Rätsel zugreifen können:
+
+```typescript
+import { UIRenderer } from './ui/UIRenderer.js';
+
+class GameController {
+  private renderer;
+  private roomsData: any = null; // Hier speichern wir die geladenen JSON-Daten
+
+  constructor() {
+    this.renderer = new UIRenderer('app');
+  }
+
+  public async init() {
+    console.log("Ich bin in main.ts und lade die Spieldaten!");
+
+    try {
+      // JSON-Datei vom Server laden (Wichtig: Läuft nur über Live Server!)
+      const response = await fetch('./src/data/rooms.json');
+      if (!response.ok) {
+        throw new Error("Netzwerkfehler beim Laden der rooms.json");
+      }
+
+      const data = await response.json();
+      this.roomsData = data.rooms; // Räume abspeichern
+
+      // Wir bereiten eine kompakte Liste für das UI vor (nur ID und Name)
+      const roomSummaries = this.roomsData.map((room: any) => ({
+        id: room.id,
+        name: room.name
+      }));
+
+      // Startbildschirm mit den echten Räumen rendern
+      this.renderer.renderStartScreen(roomSummaries, (name, roomId, difficulty) => {
+        this.startGame(name, roomId, difficulty);
+      });
+
+    } catch (error) {
+      console.error("Fehler:", error);
+      alert("Fehler beim Laden von rooms.json. Läuft dein Live Server?");
+    }
+  }
+
+  private startGame(name: string, roomId: string, difficulty: string) {
+    console.log(`Gestartet! Spieler: ${name}, Raum-ID: ${roomId}, Modus: ${difficulty}`);
+
+    // Test: Den ausgewählten Raum in den Rohdaten finden
+    const selectedRoom = this.roomsData.find((r: any) => r.id === roomId);
+    console. Gefundener Raum:", selectedRoom);
+
+    // Hier ginge es im nächsten Schritt weiter mit dem ersten Rätsel!
+  }
+}
+
+// Spiel starten
+const gameController = new GameController();
+gameController.init();
+
+```
+
+---
+
+### Warum machen wir das so?
+
+* **Asynchrones Laden (`async/await`):** JavaScript muss kurz auf die Antwort der Festplatte bzw. des Webservers warten, bis die JSON-Datei da ist. Das wird mit `await fetch(...)` sauber gelöst.
+* **Entkopplung:** Der `UIRenderer` weiß absolut nichts von JSON oder Dateien – er kriegt einfach ein fertiges Array mit Objekten (`{ id, name }`) und baut daraus das Dropdown. Das entspricht perfekt dem Prinzip der sauberen Gewaltenteilung im Code!
+
+Möchtest du als Nächstes sehen, wie wir das erste Rätsel des ausgewählten Raums auf dem Bildschirm anzeigen?
+*** Gemini-Ende
+
+*** Ich-Anfang
+Ja.
+*** Ich-Ende
+
+*** Gemini-Anfang
+Um das erste Rätsel anzuzeigen, erweitern wir unsere Logik um einen kleinen **Zustand (State)** im `GameController`. Er merkt sich ab jetzt:
+
+1. Welcher Raum wurde ausgewählt?
+2. Welcher Schwierigkeitsgrad ist aktiv?
+3. Bei welchem Rätsel (Index `0`, `1` oder `2`) befinden wir uns gerade?
+
+Wenn der Start-Button gedrückt wird, springen wir zum ersten Rätsel des Raums.
+
+---
+
+### 🛠️ 1. Die neue Methode in `src/ui/UIRenderer.ts`
+
+Füge diese Methode zu deiner `UIRenderer`-Klasse hinzu. Sie kümmert sich darum, das aktuelle Rätsel auf dem Bildschirm darzustellen (wir beschränken uns hier erst einmal auf Texteingaben und Zahlen, damit es übersichtlich bleibt):
+
+```typescript
+  renderPuzzle(puzzle: any, onAnswer: (answer: string) => void, onHint: () => void) {
+    this.appContainer.innerHTML = `
+      <div class="card bg-light border-0 p-4 shadow-sm">
+        <span class="badge bg-primary mb-2 align-self-start">Rätsel</span>
+        <h3 class="h4 text-primary fw-bold mb-3">${puzzle.name}</h3>
+        <p class="lead mb-4">${puzzle.task}</p>
+
+        <div id="hint-box" class="mb-3"></div>
+
+        <form id="puzzle-form">
+          <div class="mb-3">
+            <input type="text" id="puzzle-answer" class="form-control form-control-lg" required placeholder="Deine Antwort hier eingeben...">
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-success btn-kid flex-grow-1">Antwort prüfen ✅</button>
+            <button type="button" id="hint-btn" class="btn btn-outline-warning btn-kid">💡 Hinweis</button>
+          </div>
+        </form>
+      </div>
+    `;
+
+    // Event-Listener für das Absenden der Antwort
+    document.getElementById('puzzle-form')!.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const answer = (document.getElementById('puzzle-answer') as HTMLInputElement).value;
+      onAnswer(answer);
+    });
+
+    // Event-Listener für den Hinweis-Button
+    document.getElementById('hint-btn')!.addEventListener('click', () => {
+      const hintBox = document.getElementById('hint-box')!;
+      hintBox.innerHTML = `
+        <div class="alert alert-warning py-2 mb-0">
+          💡 <strong>Tipp:</strong> ${puzzle.hints[0]}
+        </div>
+      `;
+      onHint();
+    });
+  }
+
+```
+
+---
+
+### 🧠 2. Aktualisierung von `src/main.ts`
+
+Hier ergänzen wir die Variablen für den Spielstand und fügen die Methoden `startGame`, `loadCurrentPuzzle` und `handleAnswer` hinzu:
+
+```typescript
+import { UIRenderer } from './ui/UIRenderer.js';
+
+class GameController {
+  private renderer;
+  private roomsData: any = null;
+
+  // Neuer Spielzustand
+  private currentRoom: any = null;
+  private currentDifficulty: string = 'easy';
+  private currentPuzzleIndex: number = 0;
+
+  constructor() {
+    this.renderer = new UIRenderer('app');
+  }
+
+  public async init() {
+    try {
+      const response = await fetch('./src/data/rooms.json');
+      if (!response.ok) throw new Error("Konnte rooms.json nicht laden");
+
+      const data = await response.json();
+      this.roomsData = data.rooms;
+
+      const roomSummaries = this.roomsData.map((room: any) => ({
+        id: room.id,
+        name: room.name
+      }));
+
+      this.renderer.renderStartScreen(roomSummaries, (name, roomId, difficulty) => {
+        this.startGame(name, roomId, difficulty);
+      });
+
+    } catch (error) {
+      console.error("Fehler:", error);
+      alert("Fehler beim Laden von rooms.json. Läuft dein Live Server?");
+    }
+  }
+
+  private startGame(name: string, roomId: string, difficulty: string) {
+    console.log(`Spieler: ${name} gestartet im Raum: ${roomId} (${difficulty})`);
+
+    // Raum und Schwierigkeitsgrad abspeichern
+    this.currentRoom = this.roomsData.find((r: any) => r.id === roomId);
+    this.currentDifficulty = difficulty;
+    this.currentPuzzleIndex = 0; // Wir fangen beim 1. Rätsel (Index 0) an
+
+    // Das erste Rätsel laden
+    this.loadCurrentPuzzle();
+  }
+
+  private loadCurrentPuzzle() {
+    // Die Rätsel-Liste für den gewählten Schwierigkeitsgrad holen
+    const puzzles = this.currentRoom.difficulties[this.currentDifficulty];
+
+    // Prüfen, ob wir alle Rätsel gelöst haben
+    if (this.currentPuzzleIndex >= puzzles.length) {
+      alert("🎉 Wow! Du hast alle Rätsel in diesem Raum gelöst!");
+      this.init(); // Zurück zum Startbildschirm
+      return;
+    }
+
+    const currentPuzzle = puzzles[this.currentPuzzleIndex];
+
+    // An den Renderer übergeben
+    this.renderer.renderPuzzle(
+      currentPuzzle,
+      (answer) => this.checkAnswer(answer, currentPuzzle),
+      () => { console.log("Hinweis wurde angefordert"); }
+    );
+  }
+
+  private checkAnswer(userAnswer: string, puzzle: any) {
+    // Antwort prüfen (Groß-/Kleinschreibung ignorieren, Leerzeichen entfernen)
+    const isCorrect = userAnswer.trim().toUpperCase() === puzzle.solution.toUpperCase();
+
+    if (isCorrect) {
+      alert("✅ Richtig! Super gemacht!");
+      this.currentPuzzleIndex++; // Zum nächsten Rätsel springen
+      this.loadCurrentPuzzle();
+    } else {
+      alert("❌ Leider falsch. Probier es noch einmal!");
+    }
+  }
+}
+
+// Spiel starten
+const gameController = new GameController();
+gameController.init();
+
+```
+
+---
+
+### Was passiert hier im Code?
+
+1. **Zustand speichern:** In `startGame` merken wir uns das gewählte Abenteuer in `this.currentRoom` und setzen den Zähler `this.currentPuzzleIndex` auf `0`.
+2. **Array-Zugriff:** Über `this.currentRoom.difficulties[this.currentDifficulty][this.currentPuzzleIndex]` holen wir uns exakt das aktuelle Rätselobjekt aus den JSON-Daten.
+3. **Schleife / Weitergehen:** Wenn das Rätsel richtig gelöst wurde (`isCorrect === true`), erhöhen wir den Index um `1` (`this.currentPuzzleIndex++`) und laden automatisch das nächste Rätsel.
+
+Möchtest du als Nächstes das Punktesystem und den Countdown-Timer einbauen?
+*** Gemini-Ende
+
+*** Ich-Anfang
+*** Ich-Ende
+
+*** Gemini-Anfang
+
+*** Gemini-Ende
+*** Ich-Anfang
+*** Ich-Ende
+
+*** Gemini-Anfang
+*** Gemini-Ende
+
+*** Ich-Anfang
+*** Ich-Ende
+
+*** Gemini-Anfang
+*** Gemini-Ende

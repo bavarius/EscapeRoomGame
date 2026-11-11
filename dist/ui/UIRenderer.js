@@ -52,5 +52,43 @@ export class UIRenderer {
             onStart(name, roomId, difficulty);
         });
     }
+    renderPuzzle(puzzle, onAnswer, onHint) {
+        this.appContainer.innerHTML = `
+      <div class="card bg-light border-0 p-4 shadow-sm">
+        <span class="badge bg-primary mb-2 align-self-start">Rätsel</span>
+        <h3 class="h4 text-primary fw-bold mb-3">${puzzle.name}</h3>
+        <p class="lead mb-4">${puzzle.task}</p>
+
+        <div id="hint-box" class="mb-3"></div>
+
+        <form id="puzzle-form">
+          <div class="mb-3">
+            <input type="text" id="puzzle-answer" class="form-control form-control-lg" required placeholder="Deine Antwort hier eingeben...">
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-success btn-kid flex-grow-1">Antwort prüfen ✅</button>
+            <button type="button" id="hint-btn" class="btn btn-outline-warning btn-kid">💡 Hinweis</button>
+          </div>
+        </form>
+      </div>
+    `;
+        // event-listener for sending answer
+        document.getElementById('puzzle-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const answer = document.getElementById('puzzle-answer').value;
+            onAnswer(answer);
+        });
+        // event-listener for hint-button
+        document.getElementById('hint-btn').addEventListener('click', () => {
+            const hintBox = document.getElementById('hint-box');
+            hintBox.innerHTML = `
+        <div class="alert alert-warning py-2 mb-0">
+          💡 <strong>Tipp:</strong> ${puzzle.hints[0]}
+        </div>
+      `;
+            onHint();
+        });
+    }
 }
 //# sourceMappingURL=UIRenderer.js.map

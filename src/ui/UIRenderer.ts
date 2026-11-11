@@ -1,23 +1,23 @@
 export class UIRenderer {
-  private appContainer: HTMLElement;
+    private appContainer: HTMLElement;
 
-  constructor(containerId: string) {
-    this.appContainer = document.getElementById(containerId)!;
-  }
+    constructor(containerId: string) {
+        this.appContainer = document.getElementById(containerId)!;
+    }
 
-  /**
-   * Renders the start screen with the given rooms and start callback
-   *
-   * @param rooms array of rooms
-   * @param onStart callback function - executed upon form submission
-   */
-  renderStartScreen(rooms: Array<{ id: string; name: string }>, onStart: (name: string, roomId: string, difficulty: string) => void) {
-    // Create the <option>-tags dynamically from the JSON data
-    const roomOptionsHtml = rooms
-      .map(room => `<option value="${room.id}">${room.name}</option>`)
-      .join('');
+    /**
+     * Renders the start screen with the given rooms and start callback
+     *
+     * @param rooms array of rooms
+     * @param onStart callback function - executed upon form submission
+     */
+    renderStartScreen(rooms: Array<{ id: string; name: string }>, onStart: (name: string, roomId: string, difficulty: string) => void) {
+        // Create the <option>-tags dynamically from the JSON data
+        const roomOptionsHtml = rooms
+            .map(room => `<option value="${room.id}">${room.name}</option>`)
+            .join('');
 
-    this.appContainer.innerHTML = `
+        this.appContainer.innerHTML = `
       <div class="text-center">
         <h1 class="text-primary fw-bold mb-4">🧩 Kids Escape Room</h1>
         <p class="text-muted mb-4">Wähle deinen Namen, deinen Raum und den Schwierigkeitsgrad!</p>
@@ -48,12 +48,53 @@ export class UIRenderer {
       </div>
     `;
 
-    document.getElementById('start-form')!.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = (document.getElementById('player-name') as HTMLInputElement).value;
-      const roomId = (document.getElementById('room-select') as HTMLSelectElement).value;
-      const difficulty = (document.getElementById('difficulty-select') as HTMLSelectElement).value;
-      onStart(name, roomId, difficulty);
-    });
-  }
+        document.getElementById('start-form')!.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = (document.getElementById('player-name') as HTMLInputElement).value;
+            const roomId = (document.getElementById('room-select') as HTMLSelectElement).value;
+            const difficulty = (document.getElementById('difficulty-select') as HTMLSelectElement).value;
+            onStart(name, roomId, difficulty);
+        });
+    }
+
+    renderPuzzle(puzzle: any, onAnswer: (answer: string) => void, onHint: () => void) {
+        this.appContainer.innerHTML = `
+      <div class="card bg-light border-0 p-4 shadow-sm">
+        <span class="badge bg-primary mb-2 align-self-start">Rätsel</span>
+        <h3 class="h4 text-primary fw-bold mb-3">${puzzle.name}</h3>
+        <p class="lead mb-4">${puzzle.task}</p>
+
+        <div id="hint-box" class="mb-3"></div>
+
+        <form id="puzzle-form">
+          <div class="mb-3">
+            <input type="text" id="puzzle-answer" class="form-control form-control-lg" required placeholder="Deine Antwort hier eingeben...">
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-success btn-kid flex-grow-1">Antwort prüfen ✅</button>
+            <button type="button" id="hint-btn" class="btn btn-outline-warning btn-kid">💡 Hinweis</button>
+          </div>
+        </form>
+      </div>
+    `;
+
+        // event-listener for sending answer
+        document.getElementById('puzzle-form')!.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const answer = (document.getElementById('puzzle-answer') as HTMLInputElement).value;
+            onAnswer(answer);
+        });
+
+        // event-listener for hint-button
+        document.getElementById('hint-btn')!.addEventListener('click', () => {
+            const hintBox = document.getElementById('hint-box')!;
+            hintBox.innerHTML = `
+        <div class="alert alert-warning py-2 mb-0">
+          💡 <strong>Tipp:</strong> ${puzzle.hints[0]}
+        </div>
+      `;
+            onHint();
+        });
+    }
 }

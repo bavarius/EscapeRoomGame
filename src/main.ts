@@ -2,49 +2,84 @@ import { UIRenderer } from './ui/UIRenderer.js';
 
 class GameController {
     private renderer;
-    private roomsData: any = null; // Storage for the rooms data loaded from JSON
+    private roomsData: any = null;
+
+    // new game state
+    private currentRoom: any = null;
+    private currentDifficulty: string = 'easy';
+    private currentPuzzleIndex: number = 0;
 
     constructor() {
         this.renderer = new UIRenderer('app');
     }
 
     public async init() {
-        console.log("Inside GameController.init() - Loading rooms.json...");
-
         try {
-            // Load the rooms.json file - only works if served via a server (like Live Server), not directly from the filesystem
             const response = await fetch('./src/data/rooms.json');
-            if (!response.ok) {
-                throw new Error("Network error while loading rooms.json");
-            }
+            if (!response.ok) throw new Error("Konnte rooms.json nicht laden");
 
             const data = await response.json();
-            this.roomsData = data.rooms; // store rooms data
+            this.roomsData = data.rooms;
 
-            // Create a summary of rooms for the start screen containing only id and name
             const roomSummaries = this.roomsData.map((room: any) => ({
                 id: room.id,
                 name: room.name
             }));
 
-            // Render the start screen with the room summaries and a callback for when the game starts
             this.renderer.renderStartScreen(roomSummaries, (name, roomId, difficulty) => {
                 this.startGame(name, roomId, difficulty);
             });
+
         } catch (error) {
-            console.error("Error:", error);
-            alert("Error while loading rooms.json. Is your Live Server running?");
+            console.error("Fehler:", error);
+            alert("Fehler beim Laden von rooms.json. Läuft dein Live Server?");
         }
     }
 
     private startGame(name: string, roomId: string, difficulty: string) {
-        console.log(`Gestartet! Spieler: ${name}, Raum-ID: ${roomId}, Modus: ${difficulty}`);
+        console.log(`Spieler: ${name} gestartet im Raum: ${roomId} (${difficulty})`);
 
-        // Test: Find the selected room from the loaded rooms data
-        const selectedRoom = this.roomsData.find((r: any) => r.id === roomId);
-        console.log("Gewählter Raum:", selectedRoom);
+        // store room and difficulty level
+        this.currentRoom = this.roomsData.find((r: any) => r.id === roomId);
+        this.currentDifficulty = difficulty;
+        this.currentPuzzleIndex = 0; // begin with 1st puzzle (index: 0)
 
-        // Continue with the game logic here, e.g., rendering the first puzzle, etc.
+        // load first puzzle
+        this.loadCurrentPuzzle();
+    }
+
+    private loadCurrentPuzzle() {
+        // fetch puzzle list for selected difficulty level
+        const puzzles = this.currentRoom.difficulties[this.currentDifficulty];
+
+        // check if all puzzles of current room are solved
+        if (this.currentPuzzleIndex >= puzzles.length) {
+            alert("🎉 Wow! Du hast alle Rätsel in diesem Raum gelöst!");
+            this.init(); // back to start screen
+            return;
+        }
+
+        const currentPuzzle = puzzles[this.currentPuzzleIndex];
+
+        // pass to renderer
+        this.renderer.renderPuzzle(
+            currentPuzzle,
+            (answer) => this.checkAnswer(answer, currentPuzzle),
+            () => { console.log("Hinweis wurde angefordert"); }
+        );
+    }
+
+    private checkAnswer(userAnswer: string, puzzle: any) {
+        // check answer, ignore character case, remove spaces
+        const isCorrect = userAnswer.trim().toUpperCase() === puzzle.solution.toUpperCase();
+
+        if (isCorrect) {
+            alert("✅ Richtig! Super gemacht!");
+            this.currentPuzzleIndex++; // jump to next puzzle
+            this.loadCurrentPuzzle();
+        } else {
+            alert("❌ Leider falsch. Probier es noch einmal!");
+        }
     }
 }
 
