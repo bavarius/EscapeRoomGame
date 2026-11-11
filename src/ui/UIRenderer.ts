@@ -5,7 +5,18 @@ export class UIRenderer {
     this.appContainer = document.getElementById(containerId)!;
   }
 
-  renderStartScreen(onStart: (name: string, roomId: string, difficulty: string) => void) {
+  /**
+   * Renders the start screen with the given rooms and start callback
+   *
+   * @param rooms array of rooms
+   * @param onStart callback function - executed upon form submission
+   */
+  renderStartScreen(rooms: Array<{ id: string; name: string }>, onStart: (name: string, roomId: string, difficulty: string) => void) {
+    // Create the <option>-tags dynamically from the JSON data
+    const roomOptionsHtml = rooms
+      .map(room => `<option value="${room.id}">${room.name}</option>`)
+      .join('');
+
     this.appContainer.innerHTML = `
       <div class="text-center">
         <h1 class="text-primary fw-bold mb-4">🧩 Kids Escape Room</h1>
@@ -20,9 +31,7 @@ export class UIRenderer {
           <div class="mb-3 text-start">
             <label class="form-label fw-bold">Wähle einen Raum:</label>
             <select id="room-select" class="form-select form-select-lg">
-              <option value="magic-forest">🌳 Der verzauberte Zauberwald</option>
-              <option value="underwater">🌊 Unterwasser-Abenteuer</option>
-              <option value="space">🚀 Weltraum-Station</option>
+              ${roomOptionsHtml}
             </select>
           </div>
 
