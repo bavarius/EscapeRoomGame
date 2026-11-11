@@ -448,12 +448,187 @@ Möchtest du als Nächstes das Punktesystem und den Countdown-Timer einbauen?
 *** Gemini-Ende
 
 *** Ich-Anfang
+Mir ist beim Debuggen des Spiels aufgefallen, dass Antworten in checkAnswer() nicht korrekt ausgewertet werden können, wenn in der JSON-Datei unter Solution ein Array ist.
+Zur Behandlung von Mehrfach-Antworten müsste auch die Eingabemethode angepasst werden.
+Das hat zur Folge, dass die JSON-Datei sich noch weiter verzweigen muss:
+Für die Eingabe könnte ein Array aus Bilder-Links dazu dienen, Eingabemöglichkeiten als Cards zu erzeugen.
+Die Antwort soll dann vom Programm in ein Array konvertiert werden.
+Hast Du eine Lösung, die es erlaubt, Mehrfachantworten per JSON zu konfigurieren?
 *** Ich-Ende
 
 *** Gemini-Anfang
+Das ist eine fantastische Weiterentwicklung! Wenn Rätsel komplexer werden (wie Reihenfolgen, Mehrfachauswahl oder visuelle Zuordnungen), kommen wir mit einem einfachen Text-Input nicht mehr weiter.Um das flexibel und sauber zu lösen, erweitern wir unser JSON-Datenmodell so, dass ein Rätsel optional ein Feld "options" (mit Bildern oder Texten) erhalten kann. Der UIRenderer baut daraus dynamisch klickbare Cards oder Buttons, sammelt die Klicks in einem Array, und checkAnswer() prüft, ob das Antwort-Array exakt mit der Lösung übereinstimmt.Hier ist die schrittweise Umsetzung für deine Architektur:📦 1. Anpassung der rooms.json (Beispiel für ein visuelles Karten-Rätsel)In der JSON definieren wir bei bestimmten Rätseln nun zusätzlich options (mit ID und Bild-URL) und hinterlegen im solution-Feld ein Array aus den erwarteten IDs:JSON{
+  "id": "magic-forest",
+  "name": "🌳 Der verzauberte Zauberwald",
+  "difficulties": {
+    "easy": [
+      {
+        "id": "p1",
+        "name": "Der magische Pfad",
+        "type": "card_grid",
+        "task": "Klicke die Symbole in der richtigen Reihenfolge an, um das Tor zu öffnen!",
+        "hints": ["Achte auf die Reihenfolge von Sonne, Pilz und Baum."],
+        "solution": ["sun", "mushroom", "tree"],
+        "options": [
+          { "id": "tree", "name": "Baum", "image": "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=150" },
+          { "id": "sun", "name": "Sonne", "image": "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=150" },
+          { "id": "mushroom", "name": "Pilz", "image": "https://images.unsplash.com/photo-1535930891776-0c2dfb7fda1a?w=150" }
+        ]
+      }
+    ]
+  }
+}
+🎨 2. Anpassung in src/ui/UIRenderer.tsWir erweitern renderPuzzle so, dass es prüft, ob puzzle.options vorhanden sind. Wenn ja, rendert es ein wunderschönes Grid aus klickbaren Bootstrap-Cards mit Bildern. Der Spieler kann sie anklicken, sie merken sich ihre Auswahl in einem Array, und erst beim Absenden wird das Array an die Spiellogik übergeben.TypeScriptexport class UIRenderer {
+  private appContainer: HTMLElement;
+
+  constructor(containerId: string) {
+    this.appContainer = document.getElementById(containerId)!;
+  }
+
+  // ... (renderStartScreen bleibt gleich) ...
+
+  renderPuzzle(puzzle: any, onAnswer: (answer: any) => void, onHint: () => void) {
+    let inputHtml = '';
+
+    // Fall A: Das Rätsel hat Bild-Karten als Auswahlmöglichkeiten (Array)
+    if (puzzle.type === 'card_grid' && puzzle.options) {
+      const cardsHtml = puzzle.options.map((opt: any) => `
+        <div class="col-4 mb-3">
+          <div class="card puzzle-card h-100 text-center p-2 shadow-sm" data-id="${opt.id}" style="cursor: pointer; border: 3px solid transparent;">
+            <img src="${opt.image}" class="card-img-top rounded" alt="${opt.name}" style="height: 80px; object-fit: cover;">
+            <div class="card-body p-1">
+              <small class="fw-bold">${opt.name}</small>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      inputHtml = `
+        <p class="fw-bold">Klicke die Karten in der richtigen Reihenfolge an:</p>
+        <div class="row g-2 mb-3" id="card-grid">
+          ${cardsHtml}
+        </div>
+        <div class="alert alert-secondary py-1 text-center mb-3" id="sequence-display">Deine Auswahl: (Keine)</div>
+        <button type="button" id="reset-selection" class="btn btn-outline-secondary btn-sm mb-3 w-100">Auswahl zurücksetzen 🔄</button>
+      `;
+    }
+    // Fall B: Klassisches Texteingabe-Rätsel
+    else {
+      inputHtml = `
+        <div class="mb-3">
+          <input type="text" id="puzzle-answer" class="form-control form-control-lg" required placeholder="Deine Antwort hier eingeben...">
+        </div>
+      `;
+    }
+
+    this.appContainer.innerHTML = `
+      <div class="card bg-light border-0 p-4 shadow-sm">
+        <span class="badge bg-primary mb-2 align-self-start">Rätsel</span>
+        <h3 class="h4 text-primary fw-bold mb-3">${puzzle.name}</h3>
+        <p class="lead mb-4">${puzzle.task}</p>
+
+        <div id="hint-box" class="mb-3"></div>
+
+        <form id="puzzle-form">
+          ${inputHtml}
+          <div class="d-flex gap-2">
+            <button type="submit" id="submit-btn" class="btn btn-success btn-kid flex-grow-1">Antwort prüfen ✅</button>
+            <button type="button" id="hint-btn" class="btn btn-outline-warning btn-kid">💡 Hinweis</button>
+          </div>
+        </form>
+      </div>
+    `;
+
+    let selectedSequence: string[] = [];
+
+    // Logik für das Anklicken von Karten (Card Grid)
+    if (puzzle.type === 'card_grid' && puzzle.options) {
+      const seqDisplay = document.getElementById('sequence-display')!;
+
+      document.querySelectorAll('.puzzle-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          const cardEl = e.currentTarget as HTMLElement;
+          const id = cardEl.getAttribute('data-id')!;
+
+          // Verhindern, dass dieselbe Karte mehrfach in der Sequenz landet (optional)
+          if (!selectedSequence.includes(id)) {
+            selectedSequence.push(id);
+            cardEl.style.borderColor = '#8A2BE2'; // Visuelles Feedback (Violetter Rahmen)
+            cardEl.style.opacity = '0.6';
+
+            // Textanzeige aktualisieren
+            seqDisplay.textContent = `Deine Auswahl: ${selectedSequence.join(' ➔ ')}`;
+          }
+        });
+      });
+
+      // Reset-Button für die Auswahl
+      document.getElementById('reset-selection')!.addEventListener('click', () => {
+        selectedSequence = [];
+        seqDisplay.textContent = `Deine Auswahl: (Keine)`;
+        document.querySelectorAll('.puzzle-card').forEach(c => {
+          (c as HTMLElement).style.borderColor = 'transparent';
+          (c as HTMLElement).style.opacity = '1';
+        });
+      });
+    }
+
+    // Formular Absenden
+    document.getElementById('puzzle-form')!.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (puzzle.type === 'card_grid') {
+        onAnswer(selectedSequence); // Übergibt ein Array (z.B. ["sun", "mushroom"])
+      } else {
+        const answer = (document.getElementById('puzzle-answer') as HTMLInputElement).value;
+        onAnswer(answer); // Übergibt einen String
+      }
+    });
+
+    // Hinweis-Button
+    document.getElementById('hint-btn')!.addEventListener('click', () => {
+      const hintBox = document.getElementById('hint-box')!;
+      hintBox.innerHTML = `
+        <div class="alert alert-warning py-2 mb-0">
+          💡 <strong>Tipp:</strong> ${puzzle.hints[0]}
+        </div>
+      `;
+      onHint();
+    });
+  }
+}
+🧠 3. Anpassung von checkAnswer in src/main.tsIn checkAnswer müssen wir nun dynamisch prüfen: Ist die Lösung (puzzle.solution) ein Array oder ein String?Wenn es ein Array ist (z. B. bei Sequenzen oder Kartenklicks), vergleichen wir die Arrays elementweise (oder via JSON.stringify).Wenn es ein String ist, machen wir den gewohnten Textvergleich.TypeScript  private checkAnswer(userAnswer: any, puzzle: any) {
+    let isCorrect = false;
+
+    // Prüfen, ob die Lösung im JSON ein Array ist (z.B. Karten-Sequenz)
+    if (Array.isArray(puzzle.solution)) {
+      // Array-Vergleich: Stimmen Länge und exakte Reihenfolge überein?
+      isCorrect = Array.isArray(userAnswer) &&
+                  userAnswer.length === puzzle.solution.length &&
+                  userAnswer.every((val, index) => val === puzzle.solution[index]);
+    }
+    // Andernfalls normaler String-Vergleich
+    else if (typeof puzzle.solution === 'string') {
+      const cleanUserAnswer = String(userAnswer).trim().toUpperCase();
+      const cleanSolution = puzzle.solution.trim().toUpperCase();
+      isCorrect = cleanUserAnswer === cleanSolution;
+    }
+
+    if (isCorrect) {
+      alert("✅ Richtig! Super gemacht!");
+      this.currentPuzzleIndex++;
+      this.loadCurrentPuzzle();
+    } else {
+      alert("❌ Leider falsch oder unvollständig. Probier es noch einmal!");
+    }
+  }
+Zusammenfassung:JSON: Kann jetzt wahlweise Strings ("solution": "SCHATZ12") oder Arrays ("solution": ["sun", "tree"]) enthalten.Renderer: Erkennt anhand von puzzle.type === 'card_grid', ob er Bilder-Karten zum Anklicken rendern soll und gibt ein Array zurück.Logik (checkAnswer): Unterscheidet sauber zwischen String- und Array-Validierung.
+
+Möchtest du, dass wir für das richtige Lösen einer Karte oder Sequenz noch einen kleinen Sound oder visuellen Effekt einbauen?
 
 *** Gemini-Ende
+
 *** Ich-Anfang
+
 *** Ich-Ende
 
 *** Gemini-Anfang

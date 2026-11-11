@@ -68,52 +68,64 @@
           {
             "id": "u1",
             "name": "Die Muschel-Kette",
-            "type": "sequence",
-            "task": "Klicke die Muscheln in dieser Farbfolge: Rosa, Blau, Rosa.",
-            "hints": ["Achte auf das Muster: Erst Rosa, dann Blau, dann wieder Rosa."],
-            "solution": ["pink", "blue", "pink"]
+            "type": "card_grid",
+            "task": "Klicke die Muscheln in dieser Farbfolge: Rosa, Blau, Gelb, Grün.",
+            "hints": ["Achte auf das Muster: Erst Rosa, dann Blau, dann Gelb, dann Grün."],
+            "solution": ["pink", "blue", "yellow", "green"],
+            "options": [
+              { "id": "green", "name": "Grün", "image": "./dist/img/shell_green.png" },
+              { "id": "blue", "name": "Blau", "image": "./dist/img/shell_blue.png" },
+              { "id": "yellow", "name": "Gelb", "image": "./dist/img/shell_yellow.png" },
+              { "id": "pink", "name": "Pink", "image": "./dist/img/shell_pink.png" }
+            ]
           },
           {
             "id": "u2",
-            "name": "Der Oktopus-Arm",
+            "name": "Perlen-Mathematik",
             "type": "input_number",
-            "task": "Wie viele Muscheln hast du im ersten Rätsel berührt? Multipliziere diese Zahl mit 4.",
-            "hints": ["Du hast 3 Muscheln angeklickt. 3 * 4 = ?"],
-            "solution": "12"
+            "task": "Nimm die Anzahl der Muscheln aus Rätsel 1 und verdopple sie.",
+            "hints": ["Es waren 4 Muscheln: Rechne 4 + 4."],
+            "solution": "8"
           },
           {
             "id": "u3",
             "name": "Die Schatzkiste",
             "type": "input_text",
             "task": "Öffne das Schloss mit dem Wort SCHATZ und der Zahl aus Rätsel 2.",
-            "hints": ["Das Lösungswort ist SCHATZ12"],
-            "solution": "SCHATZ12"
+            "hints": ["Das Lösungswort ist SCHATZ8"],
+            "solution": "SCHATZ8"
           }
         ],
         "hard": [
           {
             "id": "uh1",
             "name": "Der Kraken-Tanz",
-            "type": "sequence",
-            "task": "Klicke die Symbole in dieser Reihenfolge: Blau, Pink, Blau, Gelb.",
-            "hints": ["Vier Farben insgesamt. Beginne mit Blau."],
-            "solution": ["blue", "pink", "blue", "yellow"]
+            "type": "card_grid",
+            "task": "Klicke die Symbole in dieser Reihenfolge: Grün, Pink, Blau, Gelb.",
+            "hints": ["Vier Farben insgesamt. Beginne mit grün."],
+            "solution": ["green", "pink", "blue", "yellow"],
+            "options": [
+              { "id": "blue", "name": "Blau", "image": "./dist/img/blue.png" },
+              { "id": "pink", "name": "Pink", "image": "./dist/img/pink.png" },
+              { "id": "green", "name": "Grün", "image": "./dist/img/green.png" },
+              { "id": "yellow", "name": "Gelb", "image": "./dist/img/yellow.png" }
+            ]
           },
           {
             "id": "uh2",
-            "name": "Perlen-Mathematik",
+            "name": "Der Oktopus-Arm",
             "type": "input_number",
-            "task": "Nimm die Anzahl der Farben aus Rätsel 1 und rechne hoch: hoch 3 (also 4 * 4 * 4 - 4).",
-            "hints": ["Es waren 4 Tasten. 64 minus 4."],
-            "solution": "60"
+            "task": "Wie viele Farben hast du im ersten Rätsel angeklickt? Multipliziere diese Zahl mit 4.",
+            "hints": ["Du hast 4 Farben angeklickt. 4 * 4 = ?"],
+            "solution": "16"
           },
           {
             "id": "uh3",
             "name": "Königliche Schatztruhe",
             "type": "input_text",
-            "task": "Passwort eingeben: PIRAT gefolgt von der Zahl aus Rätsel 2.",
-            "hints": ["PIRAT60"],
-            "solution": "PIRAT60"
+            "task": "Passwort eingeben: PIRAT gefolgt von der Zahl aus Rätsel 2 plus 4.",
+            "hints": ["PIRAT20"],
+            "solution": "PIRAT20"
           }
         ]
       }

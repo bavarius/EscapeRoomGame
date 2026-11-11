@@ -52,15 +52,27 @@ class GameController {
         this.renderer.renderPuzzle(currentPuzzle, (answer) => this.checkAnswer(answer, currentPuzzle), () => { console.log("Hinweis wurde angefordert"); });
     }
     checkAnswer(userAnswer, puzzle) {
-        // check answer, ignore character case, remove spaces
-        const isCorrect = userAnswer.trim().toUpperCase() === puzzle.solution.toUpperCase();
+        let isCorrect = false;
+        // Check if solution is an Array inside JSON (e.g. card-sequence)
+        if (Array.isArray(puzzle.solution)) {
+            // Array-Comparison: Sequence matching?
+            isCorrect = Array.isArray(userAnswer) &&
+                userAnswer.length === puzzle.solution.length &&
+                userAnswer.every((val, index) => val === puzzle.solution[index]);
+        }
+        // Otherwise normal String-Comparison
+        else if (typeof puzzle.solution === 'string') {
+            const cleanUserAnswer = String(userAnswer).trim().toUpperCase();
+            const cleanSolution = puzzle.solution.trim().toUpperCase();
+            isCorrect = cleanUserAnswer === cleanSolution;
+        }
         if (isCorrect) {
             alert("✅ Richtig! Super gemacht!");
-            this.currentPuzzleIndex++; // jump to next puzzle
+            this.currentPuzzleIndex++;
             this.loadCurrentPuzzle();
         }
         else {
-            alert("❌ Leider falsch. Probier es noch einmal!");
+            alert("❌ Leider falsch oder unvollständig. Probier es noch einmal!");
         }
     }
 }
