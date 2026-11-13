@@ -4,6 +4,13 @@ body {
   min-height: 100vh;
 }
 
+.card-img-top {
+  height: 100px;
+  width: 100px;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+
 .card {
   border-radius: 1.5rem;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);

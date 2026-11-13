@@ -1125,24 +1125,196 @@ Es soll das Anglerherz eines jungen Fischers höher schlagen lassen. Er soll fra
 *** Ich-Ende
 
 *** Gemini-Anfang
+s. JSON!
 *** Gemini-Ende
 
 *** Ich-Anfang
+Cool! Danke!
+Lieber Gemini! Ist es möglich, den GameController in ein neues Modul logic/GameController.ts zu verschieben und main.ts nur auf diesen Aufruf zu reduzieren:
+// Start Game
+const gameController = new GameController();
+gameController.init();
 *** Ich-Ende
 
 *** Gemini-Anfang
 *** Gemini-Ende
 
 *** Ich-Anfang
+Den Süßwasserfische-Raum habe ich schon in rooms.json eingefügt. - Ich bin noch an der Überarbeitung und suche andere Bilder...
+Danke für Deinen Vorschlag zu GameController.ts! - Es sieht gut aus!
 *** Ich-Ende
 
 *** Gemini-Anfang
+Das freut mich total zu hören! Die Auslagerung des `GameController` in ein eigenes Modul war genau der richtige Schritt – jetzt ist deine Codebasis super aufgeräumt, übersichtlich und lässt sich hervorragend erweitern.
+
+Falls du für deine Bildersuche bei den Süßwasserfischen noch ein paar passende URLs brauchst: Du kannst dafür unkompliziert freie Bilderdienste wie **Unsplash** (oder Wikimedia Commons für spezifische Fischarten) nutzen.
+
+Sag einfach Bescheid, wenn du beim Feinschliff, bei weiteren Rätseln oder neuen Features noch Unterstützung brauchst. Viel Erfolg beim Coden und beim perfekten Einstellen der Bilder! 🧩🎣🚀
 *** Gemini-Ende
 
 *** Ich-Anfang
+Highscore speichern...
 *** Ich-Ende
 
 *** Gemini-Anfang
+Das ist eine fantastische Idee! Eine Highscore-Tabelle motiviert Kinder ungemein, den Escape Room noch einmal zu spielen, um ihren eigenen Rekord zu knacken.
+
+Der Browser bietet dafür den perfekten Speicher: **`localStorage`**. Damit bleiben die Ergebnisse im Browser gespeichert, selbst wenn man die Seite schließt oder neu lädt.
+
+Wir setzen das in drei sauberen Schritten um:
+
+1. Einen **HighscoreManager**, der die Daten aus dem `localStorage` liest und speichert.
+2. Eine Erweiterung im **UIRenderer**, um die Highscore-Tabelle hübsch anzuzeigen.
+3. Die Anbindung im **GameController**, wenn ein Spiel erfolgreich beendet wird.
+
+---
+
+### 📂 1. Der neue Highscore-Manager (`src/logic/HighscoreManager.ts`)
+
+Erstelle eine neue Datei `src/logic/HighscoreManager.ts`. Sie verwaltet das Laden und Speichern der Bestenliste (sortiert nach Punkten, maximal die Top 5):
+
+```typescript
+export interface HighscoreEntry {
+  name: string;
+  points: number;
+  roomName: string;
+  date: string;
+}
+
+export class HighscoreManager {
+  private static STORAGE_KEY = 'escape_room_highscores';
+
+  // Highscores laden
+  static getHighscores(): HighscoreEntry[] {
+    const data = localStorage.getItem(this.STORAGE_KEY);
+    if (!data) return [];
+    try {
+      return JSON.parse(data);
+    } catch {
+      return [];
+    }
+  }
+
+  // Neuen Score hinzufügen und speichern
+  static addScore(name: string, points: number, roomName: string): HighscoreEntry[] {
+    const scores = this.getHighscores();
+
+    const newEntry: HighscoreEntry = {
+      name,
+      points,
+      roomName,
+      date: new Date().toLocaleDateString('de-DE')
+    };
+
+    scores.push(newEntry);
+
+    // Absteigend nach Punkten sortieren (höchste Punkte zuerst)
+    scores.sort((a, b) => b.points - a.points);
+
+    // Nur die besten 5 behalten
+    const topScores = scores.slice(0, 5);
+
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(topScores));
+    return topScores;
+  }
+}
+
+```
+
+---
+
+### 🎨 2. Anpassung in `src/ui/UIRenderer.ts`
+
+Wir erweitern die `renderVictory`-Methode so, dass sie die Highscore-Tabelle direkt auf dem Siegesbildschirm anzeigt:
+
+```typescript
+  renderVictory(points: number, highscores: Array<{ name: string; points: number; roomName: string; date: string }>, onRestart: () => void) {
+    const highscoreRows = highscores.map((entry, index) => `
+      <tr>
+        <td>#${index + 1}</td>
+        <td>${entry.name}</td>
+        <td>${entry.roomName}</td>
+        <td class="fw-bold text-success">${entry.points} Pkt</td>
+      </tr>
+    `).join('');
+
+    this.appContainer.innerHTML = `
+      <div class="text-center py-3">
+        <h1 class="text-success fw-bold mb-3">🎉 Herzlichen Glückwunsch! 🎉</h1>
+        <p class="lead">Du hast alle Rätsel erfolgreich gelöst!</p>
+
+        <div class="alert alert-primary fs-5 my-3">
+          Dein Endstand: <strong>${points} Punkte</strong>
+        </div>
+
+        <div class="card bg-light border-0 p-3 mb-4 text-start shadow-sm">
+          <h4 class="h5 text-primary fw-bold text-center mb-3">🏆 Bestenliste (Top 5)</h4>
+          <table class="table table-sm table-striped mb-0">
+            <thead>
+              <tr>
+                <th>Rang</th>
+                <th>Name</th>
+                <th>Raum</th>
+                <th>Punkte</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${highscoreRows.length > 0 ? highscoreRows : '<tr><td colspan="4" class="text-center text-muted">Noch keine Einträge</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+
+        <button id="restart-btn" class="btn btn-primary btn-kid w-100 shadow">Noch einmal spielen 🔄</button>
+      </div>
+    `;
+
+    document.getElementById('restart-btn')!.addEventListener('click', () => {
+      onRestart();
+    });
+  }
+
+```
+
+---
+
+### 🧠 3. Anpassung in `src/logic/GameController.ts`
+
+Im `GameController` rufen wir am Ende des Spiels (wenn alle Rätsel gelöst wurden) den `HighscoreManager` auf und übergeben die aktuellen Daten an den Renderer:
+
+1. Importiere oben in `GameController.ts`:
+```typescript
+import { HighscoreManager } from './HighscoreManager.js';
+
+```
+
+
+2. Passe den Sieg-Aufruf in der Methode `loadCurrentPuzzle` an:
+```typescript
+if (this.currentPuzzleIndex >= puzzles.length) {
+  clearInterval(this.timerInterval);
+
+  // Highscore speichern und aktualisierte Liste holen
+  const topScores = HighscoreManager.addScore(
+    this.player.name,
+    this.player.points,
+    this.currentRoom.name
+  );
+
+  // Sieg-Screen mit Highscore-Tabelle rendern
+  this.renderer.renderVictory(this.player.points, topScores, () => this.init());
+  return;
+}
+
+```
+
+
+
+---
+
+### 🚀 Das Ergebnis:
+
+Sobald ein Spieler den Raum erfolgreich beendet, wird sein Name mitsamt der erreichten Punktzahl und dem Raumnamen in den `localStorage` des Browsers geschrieben. Die Top-5-Tabelle wird auf der Siegesseite übersichtlich und ansprechend im Bootstrap-Stil angezeigt!
+
 *** Gemini-Ende
 
 
