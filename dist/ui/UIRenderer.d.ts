@@ -11,6 +11,8 @@ export declare class UIRenderer {
         id: string;
         name: string;
     }>, onStart: (name: string, roomId: string, difficulty: string) => void): void;
-    renderPuzzle(puzzle: any, onAnswer: (answer: any) => void, onHint: () => void): void;
+    renderPuzzle(puzzle: any, points: number, timeLeft: number, onAnswer: (answer: any) => void, onHint: () => void, onBuyTime: () => void): void;
+    updateStatusDisplay(points: number, timeLeft: number): void;
+    renderVictory(points: number, onRestart: () => void): void;
 }
 //# sourceMappingURL=UIRenderer.d.ts.map

@@ -9,52 +9,64 @@
           {
             "id": "p1",
             "name": "Das Tor der Glyphen",
-            "type": "sequence",
-            "task": "Klicke die Runen in der Reihenfolge des Regenbogens an: Rot, Gelb, Blau.",
+            "type": "card_grid",
+            "task": "Klicke die Tafeln in der Reihenfolge des Regenbogens an: Rot, Gelb, Grün, Blau.",
             "hints": ["Erinnere dich an die klassischen Regenbogenfarben von oben nach unten!"],
-            "solution": ["red", "yellow", "blue"]
+            "solution": ["Rot", "Gelb", "Grün", "Blau"],
+            "options": [
+              { "id": "green", "name": "Grün", "image": "./dist/img/green.png" },
+              { "id": "blue", "name": "Blau", "image": "./dist/img/blue.png" },
+              { "id": "yellow", "name": "Gelb", "image": "./dist/img/yellow.png" },
+              { "id": "red", "name": "Rot", "image": "./dist/img/red.png" }
+            ]
           },
           {
             "id": "p2",
             "name": "Die Zahlen-Eule",
             "type": "input_number",
-            "task": "Nimm die Anzahl der geklickten Runen aus dem ersten Rätsel und verdopple sie!",
-            "hints": ["Im 1. Rätsel hast du genau 3 Runen angeklickt."],
-            "solution": "6"
+            "task": "Nimm die Anzahl der geklickten Tafeln aus dem ersten Rätsel und ziehe 2 davon ab!",
+            "hints": ["Im 1. Rätsel hast du genau 4 Tafeln angeklickt. Rechne: 4 - 2 = ?"],
+            "solution": "2"
           },
           {
             "id": "p3",
             "name": "Das Wortschloss",
             "type": "input_text",
             "task": "Gib das Zauberwort ein. Tipp: Es lautet MAGIE gefolgt von dem Ergebnis aus Rätsel 2.",
-            "hints": ["Schreibe das Wort 'MAGIE' und direkt dahinter die Zahl 6."],
-            "solution": "MAGIE6"
+            "hints": ["Schreibe das Wort 'MAGIE' und direkt dahinter die Zahl 2."],
+            "solution": "MAGIE2"
           }
         ],
         "hard": [
           {
             "id": "ph1",
             "name": "Das Meister-Runentor",
-            "type": "sequence",
-            "task": "Klicke die Tasten in exakter Reihenfolge: Grün, Rot, Blau, Gelb.",
-            "hints": ["Starte mit der Farbe des frischen Grases."],
-            "solution": ["green", "red", "blue", "yellow"]
+            "type": "card_grid",
+            "task": "Welche Farbe entsteht, wenn man Blau und Gelb mischt? Klicke die richtige Tafel!",
+            "hints": ["Die Farbe entspricht der Farbe des Grases."],
+            "solution": ["Grün"],
+            "options": [
+              { "id": "pink", "name": "Rosa", "image": "./dist/img/pink.png" },
+              { "id": "green", "name": "Grün", "image": "./dist/img/green.png" },
+              { "id": "black", "name": "Schwarz", "image": "./dist/img/black.png" },
+              { "id": "red", "name": "Rot", "image": "./dist/img/red.png" }
+            ]
           },
           {
             "id": "ph2",
-            "name": "Rätsel der uralten Eule",
+            "name": "Rätsel der Waldspinne",
             "type": "input_number",
-            "task": "Multipliziere die Anzahl der Tasten aus Rätsel 1 mit 15.",
-            "hints": ["Es waren 4 Tasten in Rätsel 1. Rechne 4 * 15."],
-            "solution": "60"
+            "task": "Wie viele Beine hat eine Spinne?",
+            "hints": ["Es sind so ungefähr 2 weniger als Du Finger an beiden Händen zusammen hast."],
+            "solution": "8"
           },
           {
             "id": "ph3",
             "name": "Das magische Kryptogramm",
             "type": "input_text",
-            "task": "Gib das ultimative Passwort ein: HEXEN gefolgt von der Zahl aus Rätsel 2.",
-            "hints": ["Das Wort lautet HEXEN und die Zahl war 60."],
-            "solution": "HEXEN60"
+            "task": "Nimm die Zahl aus dem vorherigen Rätsel und multipliziere sie mit sich selbst. Gib dann das ultimative Passwort ein: HEXEN gefolgt von der berechneten Zahl.",
+            "hints": ["Das Wort lautet HEXEN und die Zahl ist das Ergebnis von 8 * 8."],
+            "solution": "HEXEN64"
           }
         ]
       }
@@ -71,12 +83,12 @@
             "type": "card_grid",
             "task": "Klicke die Muscheln in dieser Farbfolge: Rosa, Blau, Gelb, Grün.",
             "hints": ["Achte auf das Muster: Erst Rosa, dann Blau, dann Gelb, dann Grün."],
-            "solution": ["pink", "blue", "yellow", "green"],
+            "solution": ["Rosa", "Blau", "Gelb", "Grün"],
             "options": [
               { "id": "green", "name": "Grün", "image": "./dist/img/shell_green.png" },
               { "id": "blue", "name": "Blau", "image": "./dist/img/shell_blue.png" },
               { "id": "yellow", "name": "Gelb", "image": "./dist/img/shell_yellow.png" },
-              { "id": "pink", "name": "Pink", "image": "./dist/img/shell_pink.png" }
+              { "id": "pink", "name": "Rosa", "image": "./dist/img/shell_pink.png" }
             ]
           },
           {
@@ -101,12 +113,12 @@
             "id": "uh1",
             "name": "Der Kraken-Tanz",
             "type": "card_grid",
-            "task": "Klicke die Symbole in dieser Reihenfolge: Grün, Pink, Blau, Gelb.",
+            "task": "Klicke die Symbole in dieser Reihenfolge: Grün, Rosa, Blau, Gelb.",
             "hints": ["Vier Farben insgesamt. Beginne mit grün."],
-            "solution": ["green", "pink", "blue", "yellow"],
+            "solution": ["Grün", "Rosa", "Blau", "Gelb"],
             "options": [
               { "id": "blue", "name": "Blau", "image": "./dist/img/blue.png" },
-              { "id": "pink", "name": "Pink", "image": "./dist/img/pink.png" },
+              { "id": "pink", "name": "Rosa", "image": "./dist/img/pink.png" },
               { "id": "green", "name": "Grün", "image": "./dist/img/green.png" },
               { "id": "yellow", "name": "Gelb", "image": "./dist/img/yellow.png" }
             ]
@@ -142,7 +154,11 @@
             "type": "sequence",
             "task": "Klicke die Lichter in der Reihenfolge: Gelb, Rot.",
             "hints": ["Nur zwei Schritte: Erst Gelb, dann Rot."],
-            "solution": ["yellow", "red"]
+            "solution": ["Gelb", "Rot"],
+            "options": [
+              { "id": "red", "name": "Rot", "image": "./dist/img/red.png" },
+              { "id": "yellow", "name": "Gelb", "image": "./dist/img/yellow.png" }
+            ]
           },
           {
             "id": "s2",
@@ -166,9 +182,15 @@
             "id": "sh1",
             "name": "Hyper-Antrieb Start",
             "type": "sequence",
-            "task": "Klicke in Reihenfolge: Rot, Gelb, Blau, Grün.",
+            "task": "Klicke in Reihenfolge: Rot, Gelb, Rot, Grün.",
             "hints": ["Vier Tasten zur Aktivierung."],
-            "solution": ["red", "yellow", "blue", "green"]
+            "solution": ["Rot", "Gelb", "Rot", "Grün"],
+            "options": [
+              { "id": "yellow", "name": "Gelb", "image": "./dist/img/yellow.png" },
+              { "id": "green", "name": "Grün", "image": "./dist/img/green.png" },
+              { "id": "black", "name": "Schwarz", "image": "./dist/img/black.png" },
+              { "id": "red", "name": "Rot", "image": "./dist/img/red.png" }
+            ]
           },
           {
             "id": "sh2",

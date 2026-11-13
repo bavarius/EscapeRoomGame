@@ -57,14 +57,21 @@ export class UIRenderer {
         });
     }
 
-    renderPuzzle(puzzle: any, onAnswer: (answer: any) => void, onHint: () => void) {
+    renderPuzzle(
+        puzzle: any,
+        points: number,
+        timeLeft: number,
+        onAnswer: (answer: any) => void,
+        onHint: () => void,
+        onBuyTime: () => void
+    ) {
         let inputHtml = '';
 
         // Case A: The puzzle has picture cards to select from (Array).
         if (puzzle.type === 'card_grid' && puzzle.options) {
             const cardsHtml = puzzle.options.map((opt: any) => `
                 <div class="col-6 mb-3">
-                    <div class="card puzzle-card h-100 text-center p-2 shadow-sm" data-id="${opt.id}" style="cursor: pointer; border: 3px solid transparent;">
+                    <div class="card puzzle-card h-100 text-center p-2 shadow-sm" data-id="${opt.name}" style="cursor: pointer; border: 3px solid transparent;">
                         <img src="${opt.image}" class="card-img-top rounded" alt="${opt.name}" style="height: 160px; object-fit: cover;">
                         <div class="card-body p-1">
                             <small class="fw-bold">${opt.name}</small>
@@ -92,8 +99,14 @@ export class UIRenderer {
         }
 
         this.appContainer.innerHTML = `
+            <!-- Display Points and Time -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="badge bg-primary fs-6">⭐ Punkte: <span id="points-val">${points}</span></span>
+                <span class="badge bg-warning text-dark fs-6">⏳ Zeit: <span id="timer-val">${timeLeft}</span>s</span>
+            </div>
+
             <div class="card bg-light border-0 p-4 shadow-sm">
-                <span class="badge bg-primary mb-2 align-self-start">Rätsel</span>
+                <span class="badge bg-secondary mb-2 align-self-start">Rätsel</span>
                 <h3 class="h4 text-primary fw-bold mb-3">${puzzle.name}</h3>
                 <p class="lead mb-4">${puzzle.task}</p>
 
@@ -101,9 +114,10 @@ export class UIRenderer {
 
                 <form id="puzzle-form">
                 ${inputHtml}
-                <div class="d-flex gap-2">
-                    <button type="submit" id="submit-btn" class="btn btn-success btn-kid flex-grow-1">Antwort prüfen ✅</button>
-                    <button type="button" id="hint-btn" class="btn btn-outline-warning btn-kid">💡 Hinweis</button>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-success btn-kid">Antwort prüfen ✅</button>
+                    <button type="button" id="hint-btn" class="btn btn-outline-info btn-sm">💡 Hinweis anzeigen (-50 Pkt)</button>
+                    <button type="button" id="buy-time-btn" class="btn btn-outline-info btn-sm">⏱️ +30 Sek. kaufen (-100 Pkt)</button>
                 </div>
                 </form>
             </div>
@@ -118,17 +132,12 @@ export class UIRenderer {
             document.querySelectorAll('.puzzle-card').forEach(card => {
                 card.addEventListener('click', (e) => {
                     const cardEl = e.currentTarget as HTMLElement;
-                    const id = cardEl.getAttribute('data-id')!;
+                    const name = cardEl.getAttribute('data-id')!;
 
-                    // Verhindern, dass dieselbe Karte mehrfach in der Sequenz landet (optional)
-                    if (!selectedSequence.includes(id)) {
-                        selectedSequence.push(id);
-                        cardEl.style.borderColor = '#8A2BE2'; // Visuelles Feedback (Violetter Rahmen)
-                        cardEl.style.opacity = '0.6';
-
-                        // Textanzeige aktualisieren
-                        seqDisplay.textContent = `Deine Auswahl: ${selectedSequence.join(' ➔ ')}`;
-                    }
+                    selectedSequence.push(name);
+                    cardEl.style.borderColor = '#8A2BE2'; // visual feedback (pink frame)
+                    cardEl.style.opacity = '0.6';
+                    seqDisplay.textContent = `Deine Auswahl: ${selectedSequence.join(' ➔ ')}`;
                 });
             });
 
@@ -154,7 +163,6 @@ export class UIRenderer {
             }
         });
 
-        // Hinweis-Button
         document.getElementById('hint-btn')!.addEventListener('click', () => {
             const hintBox = document.getElementById('hint-box')!;
             hintBox.innerHTML = `
@@ -164,5 +172,31 @@ export class UIRenderer {
             `;
             onHint();
         });
+
+        document.getElementById('buy-time-btn')!.addEventListener('click', () => {
+            onBuyTime();
+        });
+    }
+
+    // live-update of timer & score without reloading the whole form
+    updateStatusDisplay(points: number, timeLeft: number) {
+        const pointsEl = document.getElementById('points-val');
+        const timerEl = document.getElementById('timer-val');
+        if (pointsEl) pointsEl.textContent = points.toString();
+        if (timerEl) timerEl.textContent = timeLeft.toString();
+    }
+
+    renderVictory(points: number, onRestart: () => void) {
+        this.appContainer.innerHTML = `
+            <div class="text-center py-4">
+                <h1 class="text-success fw-bold mb-3">🎉 Herzlichen Glückwunsch! 🎉</h1>
+                <p class="lead">Du hast alle Rätsel erfolgreich gelöst und den Escape Room bezwungen!</p>
+                <div class="alert alert-primary fs-4 my-4">
+                Dein Endstand: <strong>${points} Punkte</strong>
+                </div>
+                <button id="restart-btn" class="btn btn-primary btn-kid w-100">Noch einmal spielen 🔄</button>
+            </div>
+            `;
+        document.getElementById('restart-btn')!.addEventListener('click', onRestart);
     }
 }

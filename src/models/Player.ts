@@ -6,6 +6,6 @@ export class Player {
     }
 
     removePoints(amount: number) {
-        this.points = Math.max(0, this.points - amount);
+        this.points = Math.max(0, this.points - amount); // Don't let amount get lower than 0.
     }
 }

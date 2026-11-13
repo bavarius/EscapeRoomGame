@@ -624,18 +624,443 @@ Das ist eine fantastische Weiterentwicklung! Wenn Rätsel komplexer werden (wie 
 Zusammenfassung:JSON: Kann jetzt wahlweise Strings ("solution": "SCHATZ12") oder Arrays ("solution": ["sun", "tree"]) enthalten.Renderer: Erkennt anhand von puzzle.type === 'card_grid', ob er Bilder-Karten zum Anklicken rendern soll und gibt ein Array zurück.Logik (checkAnswer): Unterscheidet sauber zwischen String- und Array-Validierung.
 
 Möchtest du, dass wir für das richtige Lösen einer Karte oder Sequenz noch einen kleinen Sound oder visuellen Effekt einbauen?
-
 *** Gemini-Ende
 
 *** Ich-Anfang
+Können wir jetzt bitte als Nächstes das Punktesystem und den Countdown-Timer einbauen?
+*** Ich-Ende
 
+*** Gemini-Anfang
+Das ist ein großartiger Schritt! Das Punktesystem und der Timer machen aus den einzelnen Rätseln ein echtes, spannendes Escape-Game mit Nervenkitzel – besonders die Idee, sich mit Punkten neue Zeit zu kaufen, wenn die Uhr tickt.
+
+Wir bauen das jetzt sauber in unsere bestehende Architektur ein:
+
+1. **`Player` Modell:** Verwaltet die Punkte des Spielers.
+2. **`UIRenderer`:** Zeigt Punkte und den Live-Countdown an und stellt einen Button zum Zeiterkauf bereit.
+3. **`GameController` (`main.ts`):** Startet den Countdown-Timer, wertet Punkte bei richtigen/falschen Antworten aus und zieht bei Hinweisen oder Zeitkauf Punkte ab.
+
+---
+
+### 📦 1. Das Player-Modell (`src/models/Player.ts`)
+
+Falls du diese Datei noch nicht hast, lege sie an. Sie speichert den Namen und die Punkte:
+
+```typescript
+export class Player {
+  constructor(public name: string, public points: number = 500) {}
+
+  addPoints(amount: number) {
+    this.points += amount;
+  }
+
+  removePoints(amount: number) {
+    this.points = Math.max(0, this.points - amount); // Punkte fallen nie unter 0
+  }
+}
+
+```
+
+---
+
+### 🎨 2. Aktualisierung von `src/ui/UIRenderer.ts`
+
+Wir erweitern `renderPuzzle` so, dass oben die aktuellen **Punkte** und die verbleibende **Zeit** angezeigt werden. Außerdem fügen wir einen Button hinzu, mit dem man sich für Punkte 30 Sekunden Extra-Zeit erkaufen kann.
+
+```typescript
+export class UIRenderer {
+  private appContainer: HTMLElement;
+
+  constructor(containerId: string) {
+    this.appContainer = document.getElementById(containerId)!;
+  }
+
+  renderStartScreen(rooms: Array<{ id: string; name: string }>, onStart: (name: string, roomId: string, difficulty: string) => void) {
+    this.appContainer.innerHTML = `
+      <div class="text-center">
+        <h1 class="text-primary fw-bold mb-4">🧩 Kids Escape Room</h1>
+        <p class="text-muted mb-4">Wähle deinen Namen, deinen Raum und den Schwierigkeitsgrad!</p>
+
+        <form id="start-form">
+          <div class="mb-3 text-start">
+            <label class="form-label fw-bold">Dein Name:</label>
+            <input type="text" id="player-name" class="form-control form-control-lg" required placeholder="z.B. Isabella, Alexandra oder Henry">
+          </div>
+
+          <div class="mb-3 text-start">
+            <label class="form-label fw-bold">Wähle einen Raum:</label>
+            <select id="room-select" class="form-select form-select-lg">
+              ${rooms.map(room => `<option value="${room.id}">${room.name}</option>`).join('')}
+            </select>
+          </div>
+
+          <div class="mb-4 text-start">
+            <label class="form-label fw-bold">Schwierigkeitsgrad:</label>
+            <select id="difficulty-select" class="form-select form-select-lg">
+              <option value="easy">Leicht (Für Einsteiger)</option>
+              <option value="hard">Schwer (Für Profis)</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-kid btn-lg w-100 shadow">Abenteuer starten! 🚀</button>
+        </form>
+      </div>
+    `;
+
+    document.getElementById('start-form')!.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = (document.getElementById('player-name') as HTMLInputElement).value;
+      const roomId = (document.getElementById('room-select') as HTMLSelectElement).value;
+      const difficulty = (document.getElementById('difficulty-select') as HTMLSelectElement).value;
+      onStart(name, roomId, difficulty);
+    });
+  }
+
+  renderPuzzle(
+    puzzle: any,
+    points: number,
+    timeLeft: number,
+    onAnswer: (answer: any) => void,
+    onHint: () => void,
+    onBuyTime: () => void
+  ) {
+    let inputHtml = '';
+
+    if (puzzle.type === 'card_grid' && puzzle.options) {
+      const cardsHtml = puzzle.options.map((opt: any) => `
+        <div class="col-4 mb-3">
+          <div class="card puzzle-card h-100 text-center p-2 shadow-sm" data-id="${opt.id}" style="cursor: pointer; border: 3px solid transparent;">
+            <img src="${opt.image}" class="card-img-top rounded" alt="${opt.name}" style="height: 80px; object-fit: cover;">
+            <div class="card-body p-1">
+              <small class="fw-bold">${opt.name}</small>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      inputHtml = `
+        <p class="fw-bold">Klicke die Karten in der richtigen Reihenfolge an:</p>
+        <div class="row g-2 mb-3" id="card-grid">
+          ${cardsHtml}
+        </div>
+        <div class="alert alert-secondary py-1 text-center mb-3" id="sequence-display">Deine Auswahl: (Keine)</div>
+        <button type="button" id="reset-selection" class="btn btn-outline-secondary btn-sm mb-3 w-100">Auswahl zurücksetzen 🔄</button>
+      `;
+    } else {
+      inputHtml = `
+        <div class="mb-3">
+          <input type="text" id="puzzle-answer" class="form-control form-control-lg" required placeholder="Deine Antwort hier eingeben...">
+        </div>
+      `;
+    }
+
+    this.appContainer.innerHTML = `
+      <!-- Punkte- und Zeit-Anzeige -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="badge bg-primary fs-6">⭐ Punkte: <span id="points-val">${points}</span></span>
+        <span class="badge bg-warning text-dark fs-6">⏳ Zeit: <span id="timer-val">${timeLeft}</span>s</span>
+      </div>
+
+      <div class="card bg-light border-0 p-4 shadow-sm">
+        <span class="badge bg-secondary mb-2 align-self-start">Rätsel</span>
+        <h3 class="h4 text-primary fw-bold mb-3">${puzzle.name}</h3>
+        <p class="lead mb-4">${puzzle.task}</p>
+
+        <div id="hint-box" class="mb-3"></div>
+
+        <form id="puzzle-form">
+          ${inputHtml}
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-success btn-kid">Antwort prüfen ✅</button>
+            <button type="button" id="hint-btn" class="btn btn-outline-warning btn-sm">💡 Hinweis anzeigen (-50 Pkt)</button>
+            <button type="button" id="buy-time-btn" class="btn btn-outline-info btn-sm">⏱️ +30 Sek. kaufen (-100 Pkt)</button>
+          </div>
+        </form>
+      </div>
+    `;
+
+    let selectedSequence: string[] = [];
+
+    if (puzzle.type === 'card_grid' && puzzle.options) {
+      const seqDisplay = document.getElementById('sequence-display')!;
+      document.querySelectorAll('.puzzle-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          const cardEl = e.currentTarget as HTMLElement;
+          const id = cardEl.getAttribute('data-id')!;
+          if (!selectedSequence.includes(id)) {
+            selectedSequence.push(id);
+            cardEl.style.borderColor = '#8A2BE2';
+            cardEl.style.opacity = '0.6';
+            seqDisplay.textContent = `Deine Auswahl: ${selectedSequence.join(' ➔ ')}`;
+          }
+        });
+      });
+
+      document.getElementById('reset-selection')!.addEventListener('click', () => {
+        selectedSequence = [];
+        seqDisplay.textContent = `Deine Auswahl: (Keine)`;
+        document.querySelectorAll('.puzzle-card').forEach(c => {
+          (c as HTMLElement).style.borderColor = 'transparent';
+          (c as HTMLElement).style.opacity = '1';
+        });
+      });
+    }
+
+    document.getElementById('puzzle-form')!.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (puzzle.type === 'card_grid') {
+        onAnswer(selectedSequence);
+      } else {
+        const answer = (document.getElementById('puzzle-answer') as HTMLInputElement).value;
+        onAnswer(answer);
+      }
+    });
+
+    document.getElementById('hint-btn')!.addEventListener('click', () => {
+      const hintBox = document.getElementById('hint-box')!;
+      hintBox.innerHTML = `<div class="alert alert-warning py-2 mb-0">💡 <strong>Tipp:</strong> ${puzzle.hints[0]}</div>`;
+      onHint();
+    });
+
+    document.getElementById('buy-time-btn')!.addEventListener('click', () => {
+      onBuyTime();
+    });
+  }
+
+  // Live Aktualisierung von Timer & Punkten, ohne das ganze Formular neu zu laden
+  updateStatusDisplay(points: number, timeLeft: number) {
+    const pointsEl = document.getElementById('points-val');
+    const timerEl = document.getElementById('timer-val');
+    if (pointsEl) pointsEl.textContent = points.toString();
+    if (timerEl) timerEl.textContent = timeLeft.toString();
+  }
+
+  renderVictory(points: number, onRestart: () => void) {
+    this.appContainer.innerHTML = `
+      <div class="text-center py-4">
+        <h1 class="text-success fw-bold mb-3">🎉 Herzlichen Glückwunsch! 🎉</h1>
+        <p class="lead">Du hast alle Rätsel erfolgreich gelöst und den Escape Room bezwungen!</p>
+        <div class="alert alert-primary fs-4 my-4">
+          Dein Endstand: <strong>${points} Punkte</strong>
+        </div>
+        <button id="restart-btn" class="btn btn-primary btn-kid w-100">Noch einmal spielen 🔄</button>
+      </div>
+    `;
+    document.getElementById('restart-btn')!.addEventListener('click', onRestart);
+  }
+}
+
+```
+
+---
+
+### 🧠 3. Die erweiterte Spiellogik in `src/main.ts`
+
+Hier integrieren wir den `Player`, den `setInterval`-Timer (der jede Sekunde herunterzählt) und die Logik zum Kaufen von Zeit oder Abziehen von Punkten bei Fehlern/Hinweisen.
+
+```typescript
+import { UIRenderer } from './ui/UIRenderer.js';
+import { Player } from './models/Player.js';
+
+class GameController {
+  private renderer;
+  private roomsData: any = null;
+
+  private player!: Player;
+  private currentRoom: any = null;
+  private currentDifficulty: string = 'easy';
+  private currentPuzzleIndex: number = 0;
+
+  private timeLeft: number = 90; // 90 Sekunden Startzeit pro Raum
+  private timerInterval: any = null;
+
+  constructor() {
+    this.renderer = new UIRenderer('app');
+  }
+
+  public async init() {
+    try {
+      const response = await fetch('./src/data/rooms.json');
+      if (!response.ok) throw new Error("Konnte rooms.json nicht laden");
+
+      const data = await response.json();
+      this.roomsData = data.rooms;
+
+      const roomSummaries = this.roomsData.map((room: any) => ({
+        id: room.id,
+        name: room.name
+      }));
+
+      this.renderer.renderStartScreen(roomSummaries, (name, roomId, difficulty) => {
+        this.startGame(name, roomId, difficulty);
+      });
+
+    } catch (error) {
+      console.error("Fehler:", error);
+      alert("Fehler beim Laden von rooms.json. Läuft dein Live Server?");
+    }
+  }
+
+  private startGame(name: string, roomId: string, difficulty: string) {
+    // Spieler mit Startpunkten (z.B. 500) erstellen
+    this.player = new Player(name, 500);
+    this.currentRoom = this.roomsData.find((r: any) => r.id === roomId);
+    this.currentDifficulty = difficulty;
+    this.currentPuzzleIndex = 0;
+    this.timeLeft = 90;
+
+    this.startTimer();
+    this.loadCurrentPuzzle();
+  }
+
+  private startTimer() {
+    if (this.timerInterval) clearInterval(this.timerInterval);
+
+    this.timerInterval = setInterval(() => {
+      this.timeLeft--;
+      this.renderer.updateStatusDisplay(this.player.points, this.timeLeft);
+
+      if (this.timeLeft <= 0) {
+        this.timeLeft = 0;
+        clearInterval(this.timerInterval);
+        alert("⏰ Die Zeit ist abgelaufen! Das Abenteuer ist vorbei.");
+        this.init(); // Zurück zum Start
+      }
+    }, 1000);
+  }
+
+  private loadCurrentPuzzle() {
+    const puzzles = this.currentRoom.difficulties[this.currentDifficulty];
+
+    if (this.currentPuzzleIndex >= puzzles.length) {
+      clearInterval(this.timerInterval);
+      this.renderer.renderVictory(this.player.points, () => this.init());
+      return;
+    }
+
+    const currentPuzzle = puzzles[this.currentPuzzleIndex];
+
+    this.renderer.renderPuzzle(
+      currentPuzzle,
+      this.player.points,
+      this.timeLeft,
+      (answer) => this.checkAnswer(answer, currentPuzzle),
+      // Callback für Hinweis (-50 Punkte)
+      () => {
+        this.player.removePoints(50);
+        this.renderer.updateStatusDisplay(this.player.points, this.timeLeft);
+      },
+      // Callback für Zeit kaufen (-100 Punkte für +30 Sekunden)
+      () => {
+        if (this.player.points >= 100) {
+          this.player.removePoints(100);
+          this.timeLeft += 30;
+          this.renderer.updateStatusDisplay(this.player.points, this.timeLeft);
+          alert("⏱️ Super! Du hast dir 30 Sekunden Extra-Zeit gekauft.");
+        } else {
+          alert("❌ Du hast nicht genug Punkte, um Zeit zu kaufen! (Benötigt: 100 Pkt)");
+        }
+      }
+    );
+  }
+
+  private checkAnswer(userAnswer: any, puzzle: any) {
+    let isCorrect = false;
+
+    // Array-Vergleich (z.B. bei Card-Grids) oder String-Vergleich
+    if (Array.isArray(puzzle.solution)) {
+      isCorrect = Array.isArray(userAnswer) &&
+                  userAnswer.length === puzzle.solution.length &&
+                  userAnswer.every((val, index) => val === puzzle.solution[index]);
+    } else if (typeof puzzle.solution === 'string') {
+      const cleanUserAnswer = String(userAnswer).trim().toUpperCase();
+      const cleanSolution = puzzle.solution.trim().toUpperCase();
+      isCorrect = cleanUserAnswer === cleanSolution;
+    }
+
+    if (isCorrect) {
+      alert("✅ Richtig! +100 Punkte!");
+      this.player.addPoints(100); // Belohnung für richtige Antwort
+      this.currentPuzzleIndex++;
+      this.loadCurrentPuzzle();
+    } else {
+      alert("❌ Leider falsch! -20 Punkte.");
+      this.player.removePoints(20); // Strafe für falsche Antwort
+      this.renderer.updateStatusDisplay(this.player.points, this.timeLeft);
+    }
+  }
+}
+
+// Spiel starten
+const gameController = new GameController();
+gameController.init();
+
+```
+
+---
+
+### Was passiert nun im Spiel?
+
+* **Die Uhr tickt:** Sobald ein Raum startet, läuft der Countdown im Sekundentakt herunter.
+* **Punkte sammeln & verlieren:** Richtige Antworten geben $+100$ Punkte, falsche kosten $-20$ Punkte, Hinweise kosten $-50$ Punkte.
+* **Zeit nachkaufen:** Wenn die Zeit knapp wird, kann der Spieler auf „+30 Sek. kaufen“ klicken – solange er mindestens $100$ Punkte auf dem Konto hat!
+
+Möchtest du als Nächstes die Abhängigkeiten zwischen den Rätseln (z.B. dass die Lösung aus Rätsel 1 im Text oder als Code für Rätsel 2 benötigt wird) weiter ausbauen?
+*** Gemini-Ende
+
+*** Ich-Anfang
 *** Ich-Ende
 
 *** Gemini-Anfang
 *** Gemini-Ende
 
-*** Ich-Anfang
-*** Ich-Ende
+💯💯💯
 
-*** Gemini-Anfang
-*** Gemini-Ende
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+| Nr. | Schwierigkeit | Quizfrage | Antwort |
+|---:|---|---|---|
+| 1 | Leicht | Wie viele Beine hat eine Spinne? | Acht |
+| 2 | Leicht | Welche Farbe entsteht, wenn man Blau und Gelb mischt? | Grün |
+| 3 | Leicht | Wie heißt der Stern, der uns tagsüber Licht spendet? | Die Sonne |
+| 4 | Leicht | Welches Tier sagt „Miau“? | Die Katze |
+| 5 | Leicht | Wie viele Tage hat eine Woche? | Sieben |
+| 6 | Leicht | Auf welchem Kontinent liegt Deutschland? | Europa |
+| 7 | Mittel | Wie heißt die Hauptstadt von Frankreich? | Paris |
+| 8 | Mittel | Welcher Planet ist als „Roter Planet“ bekannt? | Mars |
+| 9 | Mittel | Wie viele Seiten hat ein Würfel? | Sechs |
+| 10 | Mittel | Welches Tier ist das größte an Land lebende Säugetier? | Der Afrikanische Elefant |
+| 11 | Mittel | Wie nennt man Wasser, wenn es gefroren ist? | Eis |
+| 12 | Mittel | Wie viele Minuten hat eine Stunde? | 60 |
+| 13 | Mittel | Welches Organ pumpt Blut durch unseren Körper? | Das Herz |
+| 14 | Mittel | Wie heißt die Verwandlung von einer Raupe zu einem Schmetterling? | Metamorphose |
+| 15 | Knifflig | Welcher Planet ist der größte in unserem Sonnensystem? | Jupiter |
+| 16 | Knifflig | Wie viele Ecken hat ein Achteck? | Acht |
+| 17 | Knifflig | Welches Gas nehmen Pflanzen für die Fotosynthese aus der Luft auf? | Kohlendioxid |
+| 18 | Schwer | Wie heißt der längste Fluss der Welt? | Der Nil (je nach Messweise wird auch der Amazonas genannt) |
+| 19 | Schwer | Was ist die kleinste Primzahl? | 2 |
+| 20 | Schwer | Wie viele Knochen hat ein erwachsener Mensch ungefähr? | 206 |
