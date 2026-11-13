@@ -62,9 +62,17 @@
           },
           {
             "id": "ph3",
+            "name": "Gib acht!",
+            "type": "input_number",
+            "task": "Wie viele Seiten hat ein Achteck?",
+            "hints": ["Es hat genauso viele Seiten wie es Ecken hat."],
+            "solution": "8"
+          },
+          {
+            "id": "ph4",
             "name": "Das magische Kryptogramm",
             "type": "input_text",
-            "task": "Nimm die Zahl aus dem vorherigen Rätsel und multipliziere sie mit sich selbst. Gib dann das ultimative Passwort ein: HEXEN gefolgt von der berechneten Zahl.",
+            "task": "Nimm die beiden Zahlen aus den letzten Rätseln und multipliziere sie miteinander. Gib dann das ultimative Passwort ein: HEXEN gefolgt von der berechneten Zahl.",
             "hints": ["Das Wort lautet HEXEN und die Zahl ist das Ergebnis von 8 * 8."],
             "solution": "HEXEN64"
           }
@@ -125,19 +133,27 @@
           },
           {
             "id": "uh2",
-            "name": "Der Oktopus-Arm",
+            "name": "Mensch-ärgere-Dich-nicht für Meeresbewohner",
             "type": "input_number",
-            "task": "Wie viele Farben hast du im ersten Rätsel angeklickt? Multipliziere diese Zahl mit 4.",
-            "hints": ["Du hast 4 Farben angeklickt. 4 * 4 = ?"],
-            "solution": "16"
+            "task": "Wie viele Seiten hat ein Würfel?",
+            "hints": ["Welche Zahlen kann man den würfeln? Zähle die Möglichkeiten!"],
+            "solution": "6"
           },
           {
             "id": "uh3",
+            "name": "Der Oktopus-Arm",
+            "type": "input_number",
+            "task": "Addiere 2 (= zähle dazu...) zur Zahl aus dem vorherigen Rätsel. Gib die Zahl hier ein!",
+            "hints": ["Die vorherige Zahl war 6: 6 + 2 = ?"],
+            "solution": "8"
+          },
+          {
+            "id": "uh4",
             "name": "Königliche Schatztruhe",
             "type": "input_text",
-            "task": "Passwort eingeben: PIRAT gefolgt von der Zahl aus Rätsel 2 plus 4.",
-            "hints": ["PIRAT20"],
-            "solution": "PIRAT20"
+            "task": "Passwort eingeben: PIRAT gefolgt von der Zahl aus dem vorherigen Rätsel.",
+            "hints": ["PIRAT8"],
+            "solution": "PIRAT8"
           }
         ]
       }
@@ -151,7 +167,7 @@
           {
             "id": "s1",
             "name": "Sternen-Check",
-            "type": "sequence",
+            "type": "card_grid",
             "task": "Klicke die Lichter in der Reihenfolge: Gelb, Rot.",
             "hints": ["Nur zwei Schritte: Erst Gelb, dann Rot."],
             "solution": ["Gelb", "Rot"],
@@ -164,7 +180,7 @@
             "id": "s2",
             "name": "Roboter-Energie",
             "type": "input_number",
-            "task": "Nimm die Anzahl der Lichter und multipliziere sie mit 50.",
+            "task": "Nimm die Anzahl der Lichter und multipliziere sie mit 50. Gib die Antowrt hier ein!",
             "hints": ["Es waren 2 Lichter. 2 * 50 = ?"],
             "solution": "100"
           },
@@ -181,9 +197,9 @@
           {
             "id": "sh1",
             "name": "Hyper-Antrieb Start",
-            "type": "sequence",
+            "type": "card_grid",
             "task": "Klicke in Reihenfolge: Rot, Gelb, Rot, Grün.",
-            "hints": ["Vier Tasten zur Aktivierung."],
+            "hints": ["Vier Farben zur Aktivierung."],
             "solution": ["Rot", "Gelb", "Rot", "Grün"],
             "options": [
               { "id": "yellow", "name": "Gelb", "image": "./dist/img/yellow.png" },
@@ -202,11 +218,90 @@
           },
           {
             "id": "sh3",
+            "name": "Gefühle im Raumschiff",
+            "type": "input_text",
+            "task": "Welches Organ pumpt Blut durch unseren Körper?",
+            "hints": ["Gern benutztes Emoji, wenn es um Liebe geht... - 4 Buchstaben!"],
+            "solution": "Herz"
+          },
+          {
+            "id": "sh4",
             "name": "Galaktisches Haupttor",
             "type": "input_text",
             "task": "Passwort: GALAXY gefolgt von der Zahl aus Rätsel 2.",
             "hints": ["GALAXY100"],
             "solution": "GALAXY100"
+          }
+        ]
+      }
+    },
+    {
+      "id": "freshwater-fish",
+      "name": "🐟 Anglerparadies",
+      "description": "Schnapp dir deine Angelrute und löse die Rätsel rund um unsere heimischen Flüsse und Seen!",
+      "difficulties": {
+        "easy": [
+          {
+            "id": "f1",
+            "name": "Die Köder-Auswahl",
+            "type": "card_grid",
+            "task": "Ein junger Angler bereitet sich vor. Klicke die Ausrüstungsgegenstände in dieser Reihenfolge an: Erst die Angelrute, dann der Kescher und zum Schluss der Schwimmer.",
+            "hints": ["Starte mit der langen Rute, nimm dann das Netz zum Landen und zuletzt den kleinen bunten Schwimmer."],
+            "solution": ["rod", "net", "float"],
+            "options": [
+              { "id": "net", "name": "Kescher", "image": "./dist/img/eimer.webp" },
+              { "id": "float", "name": "Schwimmer", "image": "./dist/img/eimer.webp" },
+              { "id": "bucket", "name": "Eimer", "image": "./dist/img/eimer.webp" },
+              { "id": "rod", "name": "Angelrute", "image": "./dist/img/eimer.webp" }
+            ]
+          },
+          {
+            "id": "f2",
+            "name": "Der gefräßige Räuber",
+            "type": "input_text",
+            "task": "Ich habe ein langes Maul wie ein Entenschnabel, sehr scharfe Zähne und lauere im Schilf auf Beute. Welcher heimische Raubfisch bin ich?",
+            "hints": ["Mein Name beginnt mit einem 'H' und reimt sich auf 'echt'."],
+            "solution": "HECHT"
+          },
+          {
+            "id": "f3",
+            "name": "Flossen-Rechnen am Teich",
+            "type": "input_number",
+            "task": "Du hast im ersten Rätsel 3 Ausrüstungsgegenstände benutzt. Am Ufer schwimmen genau so viele Karpfen vorbei, und jeder Karpfen hat 2 Brustflossen. Wie viele Brustflossen siehst du insgesamt?",
+            "hints": ["Rechne die Anzahl der Gegenstände aus Rätsel 1 (3) mal 2."],
+            "solution": "6"
+          }
+        ],
+        "hard": [
+          {
+            "id": "fh1",
+            "name": "Vom Ufer in die Tiefe",
+            "type": "card_grid",
+            "task": "Ordne diese vier heimischen Fische danach, wo sie sich am liebsten aufhalten – von oben an der Wasseroberfläche bis ganz hinunter an den Gewässergrund: Ukelei (Oberfläche), Flussbarsch (Mittelwasser), Karpfen (Bodennähe), Aal (Schlammgrund).",
+            "hints": ["Beginne mit dem kleinen silbernen Oberflächenfisch und höre mit dem schlangenförmigen Grundfisch auf."],
+            "solution": ["bleak", "perch", "carp", "eel"],
+            "options": [
+              { "id": "carp", "name": "Karpfen", "image": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=150" },
+              { "id": "bleak", "name": "Ukelei", "image": "https://images.unsplash.com/photo-1524704654690-b56c05c78a00?w=150" },
+              { "id": "eel", "name": "Aal", "image": "https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=150" },
+              { "id": "perch", "name": "Flussbarsch", "image": "https://images.unsplash.com/photo-1504472478235-9bc48ba4d60f?w=150" }
+            ]
+          },
+          {
+            "id": "fh2",
+            "name": "Barteln am Gewässergrund",
+            "type": "input_number",
+            "task": "Der Karpfen aus Rätsel 1 sucht mit seinen Barteln am Boden nach Nahrung. Er besitzt 4 Barteln am Maul. Multipliziere die Anzahl seiner Barteln mit der Anzahl der Fische aus Rätsel 1!",
+            "hints": ["In Rätsel 1 waren es 4 Fische. Rechne 4 Barteln mal 4 Fische."],
+            "solution": "16"
+          },
+          {
+            "id": "fh3",
+            "name": "Der König der Gebirgsbäche",
+            "type": "input_text",
+            "task": "Ich liebe klares, sauerstoffreiches Wasser, habe rote Punkte mit hellem Rand auf den Flanken und bin ein begehrter Edelfisch. Gib meinen Namen zusammen mit der Zahl aus Rätsel 2 als Code ein (Beispiel: FISCH10)!",
+            "hints": ["Gesucht ist die BachFORELLE und die Zahl 16 aus dem vorherigen Rätsel."],
+            "solution": "FORELLE16"
           }
         ]
       }

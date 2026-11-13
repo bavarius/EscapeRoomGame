@@ -1,3 +1,7 @@
+/**
+ * UIRenderer class handles the rendering of the user interface for the escape room game.
+ * It provides methods to render the start screen, puzzles, feedback, and victory screen.
+ */
 export declare class UIRenderer {
     private appContainer;
     constructor(containerId: string);
@@ -14,5 +18,6 @@ export declare class UIRenderer {
     renderPuzzle(puzzle: any, points: number, timeLeft: number, onAnswer: (answer: any) => void, onHint: () => void, onBuyTime: () => void): void;
     updateStatusDisplay(points: number, timeLeft: number): void;
     renderVictory(points: number, onRestart: () => void): void;
+    renderFeedback(isCorrect: boolean, message: string, onNext: () => void): void;
 }
 //# sourceMappingURL=UIRenderer.d.ts.map

@@ -1,6 +1,9 @@
 import { UIRenderer } from './ui/UIRenderer.js';
 import { Player } from './models/Player.js';
 
+/**
+ * GameController class manages the game flow, including loading rooms, handling player actions, and managing the timer.
+ */
 class GameController {
     private renderer;
     private roomsData: any = null;
@@ -19,7 +22,7 @@ class GameController {
     private currentDifficulty: string = 'easy';
     private currentPuzzleIndex: number = 0;
 
-    private timeLeft: number = 90; // 90 Sekunden Startzeit pro Raum
+    private timeLeft: number = 90; // 90 seconds countdown timer
     private timerInterval: any = null;
 
     constructor() {
@@ -50,7 +53,7 @@ class GameController {
     }
 
     private startGame(name: string, roomId: string, difficulty: string) {
-        // Spieler mit Startpunkten (z.B. 500) erstellen
+        // create player with starting points (e.g., 500)
         this.player = new Player(name, 500);
         // store room and difficulty level
         this.currentRoom = this.roomsData.find((r: any) => r.id === roomId);
@@ -97,12 +100,12 @@ class GameController {
             this.player.points,
             this.timeLeft,
             (answer) => this.checkAnswer(answer, currentPuzzle),
-            // Callback für Hinweis (-50 Punkte)
+            // callback for hint (-50 Punkte)
             () => {
                 this.player.removePoints(50);
                 this.renderer.updateStatusDisplay(this.player.points, this.timeLeft);
             },
-            // Callback für Zeit kaufen (-100 Punkte für +30 Sekunden)
+            // callback for buying time (-100 points for +30 seconds)
             () => {
                 if (this.player.points >= 100) {
                     this.player.removePoints(100);
@@ -123,14 +126,13 @@ class GameController {
     private checkAnswer(userAnswer: any, puzzle: any) {
         let isCorrect = false;
 
-        // Check if solution is an Array inside JSON (e.g. card-sequence)
+        // check if solution is an Array inside JSON (e.g. card-sequence)
         if (Array.isArray(puzzle.solution)) {
-            // Array-Comparison: Sequence matching?
             isCorrect = Array.isArray(userAnswer) &&
                 userAnswer.length === puzzle.solution.length &&
                 userAnswer.every((val, index) => val === puzzle.solution[index]);
         }
-        // Otherwise normal String-Comparison
+        // otherwise normal String-Comparison
         else if (typeof puzzle.solution === 'string') {
             const cleanUserAnswer = String(userAnswer).trim().toUpperCase();
             const cleanSolution = puzzle.solution.trim().toUpperCase();
@@ -138,14 +140,28 @@ class GameController {
         }
 
         if (isCorrect) {
-            alert(`${this.getSuccessConfirmationText() + ' *** 100 Punkte ***'}`);
-            this.player.addPoints(100); // bonus for correct answer
-            this.currentPuzzleIndex++;
-            this.loadCurrentPuzzle();
+            this.player.addPoints(100);
+
+            // show feedback-box
+            this.renderer.renderFeedback(
+                true,
+                `${this.getSuccessConfirmationText() + ' *** 100 Punkte ***'}`,
+                () => {
+                    this.currentPuzzleIndex++;
+                    this.loadCurrentPuzzle();
+                }
+            );
         } else {
-            alert("❌ Leider falsch! -20 Punkte.");
-            this.player.removePoints(20); // penalty for wrong answer
+            this.player.removePoints(20);
             this.renderer.updateStatusDisplay(this.player.points, this.timeLeft);
+
+            this.renderer.renderFeedback(
+                false,
+                "Das war leider nicht ganz richtig. (-20 Punkte)",
+                () => {
+                    this.loadCurrentPuzzle(); // reload the same puzzle
+                }
+            );
         }
     }
 }

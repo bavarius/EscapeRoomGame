@@ -1,5 +1,8 @@
 import { UIRenderer } from './ui/UIRenderer.js';
 import { Player } from './models/Player.js';
+/**
+ * GameController class manages the game flow, including loading rooms, handling player actions, and managing the timer.
+ */
 class GameController {
     renderer;
     roomsData = null;
@@ -16,7 +19,7 @@ class GameController {
     currentRoom = null;
     currentDifficulty = 'easy';
     currentPuzzleIndex = 0;
-    timeLeft = 90; // 90 Sekunden Startzeit pro Raum
+    timeLeft = 90; // 90 seconds countdown timer
     timerInterval = null;
     constructor() {
         this.renderer = new UIRenderer('app');
@@ -42,7 +45,7 @@ class GameController {
         }
     }
     startGame(name, roomId, difficulty) {
-        // Spieler mit Startpunkten (z.B. 500) erstellen
+        // create player with starting points (e.g., 500)
         this.player = new Player(name, 500);
         // store room and difficulty level
         this.currentRoom = this.roomsData.find((r) => r.id === roomId);
@@ -78,12 +81,12 @@ class GameController {
         }
         const currentPuzzle = puzzles[this.currentPuzzleIndex];
         this.renderer.renderPuzzle(currentPuzzle, this.player.points, this.timeLeft, (answer) => this.checkAnswer(answer, currentPuzzle), 
-        // Callback für Hinweis (-50 Punkte)
+        // callback for hint (-50 Punkte)
         () => {
             this.player.removePoints(50);
             this.renderer.updateStatusDisplay(this.player.points, this.timeLeft);
         }, 
-        // Callback für Zeit kaufen (-100 Punkte für +30 Sekunden)
+        // callback for buying time (-100 points for +30 seconds)
         () => {
             if (this.player.points >= 100) {
                 this.player.removePoints(100);
@@ -101,29 +104,32 @@ class GameController {
     }
     checkAnswer(userAnswer, puzzle) {
         let isCorrect = false;
-        // Check if solution is an Array inside JSON (e.g. card-sequence)
+        // check if solution is an Array inside JSON (e.g. card-sequence)
         if (Array.isArray(puzzle.solution)) {
-            // Array-Comparison: Sequence matching?
             isCorrect = Array.isArray(userAnswer) &&
                 userAnswer.length === puzzle.solution.length &&
                 userAnswer.every((val, index) => val === puzzle.solution[index]);
         }
-        // Otherwise normal String-Comparison
+        // otherwise normal String-Comparison
         else if (typeof puzzle.solution === 'string') {
             const cleanUserAnswer = String(userAnswer).trim().toUpperCase();
             const cleanSolution = puzzle.solution.trim().toUpperCase();
             isCorrect = cleanUserAnswer === cleanSolution;
         }
         if (isCorrect) {
-            alert(`${this.getSuccessConfirmationText() + ' *** 100 Punkte ***'}`);
-            this.player.addPoints(100); // bonus for correct answer
-            this.currentPuzzleIndex++;
-            this.loadCurrentPuzzle();
+            this.player.addPoints(100);
+            // show feedback-box
+            this.renderer.renderFeedback(true, `${this.getSuccessConfirmationText() + ' *** 100 Punkte ***'}`, () => {
+                this.currentPuzzleIndex++;
+                this.loadCurrentPuzzle();
+            });
         }
         else {
-            alert("❌ Leider falsch! -20 Punkte.");
-            this.player.removePoints(20); // penalty for wrong answer
+            this.player.removePoints(20);
             this.renderer.updateStatusDisplay(this.player.points, this.timeLeft);
+            this.renderer.renderFeedback(false, "Das war leider nicht ganz richtig. (-20 Punkte)", () => {
+                this.loadCurrentPuzzle(); // reload the same puzzle
+            });
         }
     }
 }

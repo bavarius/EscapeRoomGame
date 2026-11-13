@@ -1,3 +1,7 @@
+/**
+ * UIRenderer class handles the rendering of the user interface for the escape room game.
+ * It provides methods to render the start screen, puzzles, feedback, and victory screen.
+ */
 export class UIRenderer {
     private appContainer: HTMLElement;
 
@@ -12,7 +16,7 @@ export class UIRenderer {
      * @param onStart callback function - executed upon form submission
      */
     renderStartScreen(rooms: Array<{ id: string; name: string }>, onStart: (name: string, roomId: string, difficulty: string) => void) {
-        // Create the <option>-tags dynamically from the JSON data
+        // create the <option>-tags dynamically from the JSON data
         const roomOptionsHtml = rooms
             .map(room => `<option value="${room.id}">${room.name}</option>`)
             .join('');
@@ -70,23 +74,19 @@ export class UIRenderer {
         // Case A: The puzzle has picture cards to select from (Array).
         if (puzzle.type === 'card_grid' && puzzle.options) {
             const cardsHtml = puzzle.options.map((opt: any) => `
-                <div class="col-6 mb-3">
+                <div class="col-6 mb-1">
                     <div class="card puzzle-card h-100 text-center p-2 shadow-sm" data-id="${opt.name}" style="cursor: pointer; border: 3px solid transparent;">
-                        <img src="${opt.image}" class="card-img-top rounded" alt="${opt.name}" style="height: 160px; object-fit: cover;">
-                        <div class="card-body p-1">
-                            <small class="fw-bold">${opt.name}</small>
-                        </div>
+                        <img src="${opt.image}" class="card-img-top rounded" alt='${opt.name}'">
                     </div>
                 </div>
                 `).join('');
 
             inputHtml = `
-                <p class="fw-bold">Klicke die Karten in der richtigen Reihenfolge an:</p>
-                <div class="row g-2 mb-3" id="card-grid">
+                <div class="row g-2 mb-1" id="card-grid">
                 ${cardsHtml}
                 </div>
-                <div class="alert alert-secondary py-1 text-center mb-3" id="sequence-display">Deine Auswahl: (Keine)</div>
-                <button type="button" id="reset-selection" class="btn btn-outline-secondary btn-sm mb-3 w-100">Auswahl zurücksetzen 🔄</button>
+                <div class="alert alert-secondary py-1 text-center mb-2" id="sequence-display">Deine Auswahl: (Keine)</div>
+                <button type="button" id="reset-selection" class="btn btn-outline-secondary btn-sm mb-2 w-100">Auswahl zurücksetzen 🔄</button>
             `;
         }
         // Case B: Classic Text Input Puzzle
@@ -108,7 +108,7 @@ export class UIRenderer {
             <div class="card bg-light border-0 p-4 shadow-sm">
                 <span class="badge bg-secondary mb-2 align-self-start">Rätsel</span>
                 <h3 class="h4 text-primary fw-bold mb-3">${puzzle.name}</h3>
-                <p class="lead mb-4">${puzzle.task}</p>
+                <p class="lead mb-2">${puzzle.task}</p>
 
                 <div id="hint-box" class="mb-3"></div>
 
@@ -125,7 +125,7 @@ export class UIRenderer {
 
         let selectedSequence: string[] = [];
 
-        // Logic for clicking sequence of cards (Card Grid)
+        // event listeners for cards (Card Grid)
         if (puzzle.type === 'card_grid' && puzzle.options) {
             const seqDisplay = document.getElementById('sequence-display')!;
 
@@ -152,7 +152,7 @@ export class UIRenderer {
             });
         }
 
-        // Send Form
+        // send form
         document.getElementById('puzzle-form')!.addEventListener('submit', (e) => {
             e.preventDefault();
             if (puzzle.type === 'card_grid') {
@@ -198,5 +198,27 @@ export class UIRenderer {
             </div>
             `;
         document.getElementById('restart-btn')!.addEventListener('click', onRestart);
+    }
+
+    renderFeedback(isCorrect: boolean, message: string, onNext: () => void) {
+        const alertClass = isCorrect ? 'alert-success' : 'alert-danger';
+        const title = isCorrect ? '🎉 Richtig!' : '❌ Leider falsch!';
+
+        this.appContainer.innerHTML = `
+            <div class="card bg-light border-0 p-4 shadow-sm text-center">
+                <div class="alert ${alertClass} fs-5 fw-bold mb-4" role="alert">
+                ${title}<br>
+                <span class="fs-6 fw-normal">${message}</span>
+                </div>
+
+                <button id="next-puzzle-btn" class="btn btn-primary btn-kid btn-lg w-100 shadow">
+                ${isCorrect ? 'Weiter zum nächsten Rätsel 🚀' : 'Noch einmal versuchen 🔄'}
+                </button>
+            </div>
+            `;
+
+        document.getElementById('next-puzzle-btn')!.addEventListener('click', () => {
+            onNext();
+        });
     }
 }

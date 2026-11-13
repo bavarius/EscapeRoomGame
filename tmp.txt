@@ -1008,12 +1008,143 @@ Möchtest du als Nächstes die Abhängigkeiten zwischen den Rätseln (z.B. dass 
 *** Gemini-Ende
 
 *** Ich-Anfang
+Hi Gemini!
+Könntest Du bitte für mich das alert nach Beantwortung einer Frage durch eine Textanzeige mit Bestätigungsbutton ersetzen?
+*** Ich-Ende
+
+*** Gemini-Anfang
+Hi! Das ist eine hervorragende Idee. Native Browser-`alert()`-Fenster unterbrechen den Spielfluss und sehen auf modernen, kinderfreundlichen Websites (vor allem auf Smartphones) oft unschön aus.
+
+Eingebettete Feedback-Boxen direkt im Layout (mit einer netten Erfolgs- oder Fehlermeldung und einem „Weiter“-Button) sorgen für ein viel flüssigeres und schöneres Spielerlebnis!
+
+Wir setzen das um, indem wir eine Methode in `UIRenderer` hinzufügen, die genau diese Feedback-Box anzeigt, und den `GameController` entsprechend anpassen.
+
+---
+
+### 🛠️ 1. Anpassung in `src/ui/UIRenderer.ts`
+
+Füge diese Methode zu deiner `UIRenderer`-Klasse hinzu. Sie tauscht den Inhalt der Karte aus oder blendet eine Nachricht ein, wenn eine Antwort eingereicht wurde:
+
+```typescript
+  renderFeedback(isCorrect: boolean, message: string, onNext: () => void) {
+    const alertClass = isCorrect ? 'alert-success' : 'alert-danger';
+    const title = isCorrect ? '🎉 Richtig!' : '❌ Leider falsch!';
+
+    this.appContainer.innerHTML = `
+      <div class="card bg-light border-0 p-4 shadow-sm text-center">
+        <div class="alert ${alertClass} fs-5 fw-bold mb-4" role="alert">
+          ${title}<br>
+          <span class="fs-6 fw-normal">${message}</span>
+        </div>
+
+        <button id="next-puzzle-btn" class="btn btn-primary btn-kid btn-lg w-100 shadow">
+          ${isCorrect ? 'Weiter zum nächsten Rätsel 🚀' : 'Noch einmal versuchen 🔄'}
+        </button>
+      </div>
+    `;
+
+    document.getElementById('next-puzzle-btn')!.addEventListener('click', () => {
+      onNext();
+    });
+  }
+
+```
+
+---
+
+### 🧠 2. Anpassung in `src/main.ts`
+
+In der `checkAnswer`-Methode ersetzen wir nun die bisherigen `alert(...)`-Aufrufe durch den Aufruf unseres neuen `renderFeedback`-In-Page-UI:
+
+```typescript
+  private checkAnswer(userAnswer: any, puzzle: any) {
+    let isCorrect = false;
+
+    if (Array.isArray(puzzle.solution)) {
+      isCorrect = Array.isArray(userAnswer) &&
+                  userAnswer.length === puzzle.solution.length &&
+                  userAnswer.every((val, index) => val === puzzle.solution[index]);
+    } else if (typeof puzzle.solution === 'string') {
+      const cleanUserAnswer = String(userAnswer).trim().toUpperCase();
+      const cleanSolution = puzzle.solution.trim().toUpperCase();
+      isCorrect = cleanUserAnswer === cleanSolution;
+    }
+
+    if (isCorrect) {
+      this.player.addPoints(100);
+
+      // Statt alert() zeigen wir unsere schöne Feedback-Box
+      this.renderer.renderFeedback(
+        true,
+        "Super gemacht! Du hast 100 Punkte erhalten.",
+        () => {
+          this.currentPuzzleIndex++;
+          this.loadCurrentPuzzle(); // Nächstes Rätsel laden
+        }
+      );
+    } else {
+      this.player.removePoints(20);
+      this.renderer.updateStatusDisplay(this.player.points, this.timeLeft);
+
+      this.renderer.renderFeedback(
+        false,
+        "Das war leider nicht ganz richtig. (-20 Punkte)",
+        () => {
+          this.loadCurrentPuzzle(); // Dasselbe Rätsel (oder Eingabe) neu laden
+        }
+      );
+    }
+  }
+
+```
+
+---
+
+### Was bewirkt das?
+
+1. **Keine störenden Pop-ups mehr:** Der Browser blockiert oder unterbricht nichts mehr mit hässlichen Standard-Dialogen.
+2. **Mehr Immersion:** Das Design bleibt im tollen Bootstrap-Look mit abgerundeten Ecken und passt perfekt zum kinderfreundlichen Farbkonzept.
+3. **Klares Feedback:** Der Spieler sieht sofort, warum er Punkte bekommen oder verloren hat, und klickt gezielt auf den Button, um fortzufahren.
+
+Möchtest du, dass wir als Nächstes die Abhängigkeiten zwischen den Rätseln (z.B. dass die Antwort aus Rätsel 1 im Text von Rätsel 2 auftaucht) einbauen?
+*** Gemini-Ende
+
+*** Ich-Anfang
+Sehr schön! Danke!
+Kannst Du mir bitte als Nächstes eine Spielbeschreibung als Readme.md (mit Markups) erzeugen?
+*** Ich-Ende
+
+*** Gemini-Anfang
+s. Readme!
+*** Gemini-Ende
+
+*** Ich-Anfang
+Lieber Gemini!
+Erstelle mir doch bitte noch Rätselfragen für einen weiteren Raum "Süßwasserfische"!
+Es soll das Anglerherz eines jungen Fischers höher schlagen lassen. Er soll fragen rund um heimische Fischarten beantworten.
 *** Ich-Ende
 
 *** Gemini-Anfang
 *** Gemini-Ende
 
-💯💯💯
+*** Ich-Anfang
+*** Ich-Ende
+
+*** Gemini-Anfang
+*** Gemini-Ende
+
+*** Ich-Anfang
+*** Ich-Ende
+
+*** Gemini-Anfang
+*** Gemini-Ende
+
+*** Ich-Anfang
+*** Ich-Ende
+
+*** Gemini-Anfang
+*** Gemini-Ende
+
 
 
 
@@ -1052,15 +1183,8 @@ Möchtest du als Nächstes die Abhängigkeiten zwischen den Rätseln (z.B. dass 
 | 6 | Leicht | Auf welchem Kontinent liegt Deutschland? | Europa |
 | 7 | Mittel | Wie heißt die Hauptstadt von Frankreich? | Paris |
 | 8 | Mittel | Welcher Planet ist als „Roter Planet“ bekannt? | Mars |
-| 9 | Mittel | Wie viele Seiten hat ein Würfel? | Sechs |
 | 10 | Mittel | Welches Tier ist das größte an Land lebende Säugetier? | Der Afrikanische Elefant |
 | 11 | Mittel | Wie nennt man Wasser, wenn es gefroren ist? | Eis |
 | 12 | Mittel | Wie viele Minuten hat eine Stunde? | 60 |
-| 13 | Mittel | Welches Organ pumpt Blut durch unseren Körper? | Das Herz |
 | 14 | Mittel | Wie heißt die Verwandlung von einer Raupe zu einem Schmetterling? | Metamorphose |
 | 15 | Knifflig | Welcher Planet ist der größte in unserem Sonnensystem? | Jupiter |
-| 16 | Knifflig | Wie viele Ecken hat ein Achteck? | Acht |
-| 17 | Knifflig | Welches Gas nehmen Pflanzen für die Fotosynthese aus der Luft auf? | Kohlendioxid |
-| 18 | Schwer | Wie heißt der längste Fluss der Welt? | Der Nil (je nach Messweise wird auch der Amazonas genannt) |
-| 19 | Schwer | Was ist die kleinste Primzahl? | 2 |
-| 20 | Schwer | Wie viele Knochen hat ein erwachsener Mensch ungefähr? | 206 |
