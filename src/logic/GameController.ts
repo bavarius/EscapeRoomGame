@@ -1,5 +1,6 @@
 import { UIRenderer } from '../ui/UIRenderer.js';
 import { Player } from '../models/Player.js';
+import { HighscoreManager } from './HighscoreManager.js';
 
 /**
  * GameController class manages the game flow, including loading rooms, handling player actions, and managing the timer.
@@ -29,6 +30,14 @@ export class GameController {
         this.renderer = new UIRenderer('app');
     }
 
+    /**
+     * Initializes the game by loading room data and rendering the start screen.
+     * If the rooms.json file cannot be loaded, an error message is displayed.
+     *
+     * The keyword 'async' allows the use of 'await' for asynchronous operations, making it easier to work with promises.
+     * The 'await' keyword pauses the execution of the function until the promise is resolved, allowing for a more synchronous-like flow.
+     * This is particularly useful for fetching data from external sources, such as loading the rooms.json file in this case.
+     */
     public async init() {
         try {
             const response = await fetch('./src/data/rooms.json');
@@ -52,8 +61,15 @@ export class GameController {
         }
     }
 
+    /**
+     * Starts the game with the selected room and difficulty.
+     *
+     * @param name       player's name
+     * @param roomId     ID of the selected room
+     * @param difficulty difficulty level
+     */
     private startGame(name: string, roomId: string, difficulty: string) {
-        // create player with starting points (e.g., 500)
+        // create player with starting points
         this.player = new Player(name, 500);
         // store room and difficulty level
         this.currentRoom = this.roomsData.find((r: any) => r.id === roomId);
@@ -62,10 +78,14 @@ export class GameController {
         this.timeLeft = 90;
 
         this.startTimer();
-        // load first puzzle
-        this.loadCurrentPuzzle();
+        this.loadCurrentPuzzle(); // load first puzzle
     }
 
+    /**
+     * Starts the countdown timer for the game. The timer updates every second and checks if the time has run out.
+     * If the time runs out, an alert is shown and the game is reset to the start screen.
+     * The timer can be stopped and restarted as needed.
+     */
     private startTimer() {
         if (this.timerInterval) clearInterval(this.timerInterval);
 
@@ -82,6 +102,9 @@ export class GameController {
         }, 1000);
     }
 
+    /**
+     * Loads the current puzzle based on the selected room and difficulty.
+     */
     private loadCurrentPuzzle() {
         // fetch puzzle list for selected difficulty level
         const puzzles = this.currentRoom.difficulties[this.currentDifficulty];
@@ -89,12 +112,25 @@ export class GameController {
         // check if all puzzles of current room are solved
         if (this.currentPuzzleIndex >= puzzles.length) {
             clearInterval(this.timerInterval);
-            this.renderer.renderVictory(this.player.points, () => this.init());
+
+            // Highscore speichern und aktualisierte Liste holen
+            const topScores = HighscoreManager.addScore(
+                this.player.name,
+                this.player.points,
+                this.currentRoom.name
+            );
+
+            // Sieg-Screen mit Highscore-Tabelle rendern
+            this.renderer.renderVictory(this.player.points, topScores, () => this.init());
             return;
         }
 
         const currentPuzzle = puzzles[this.currentPuzzleIndex];
 
+        /**
+         * Render the puzzle interface using the UIRenderer. The renderer is provided with the current puzzle data, player's points, remaining time, and callback functions for handling user actions such as submitting an answer, requesting a hint, or buying extra time.
+         * The callbacks are defined inline and handle the corresponding game logic, such as checking the answer, updating points, and managing the timer.
+         */
         this.renderer.renderPuzzle(
             currentPuzzle,
             this.player.points,
@@ -119,10 +155,22 @@ export class GameController {
         );
     }
 
+    /**
+     * Returns a random success confirmation message from the list of available messages.
+     *
+     * @returns random success confirmation message (String)
+     */
     private getSuccessConfirmationText() {
         return this.success_confirmations[Math.floor(Math.random() * this.success_confirmations.length)];
     }
 
+    /**
+     * Checks the user's answer against the correct solution for the given puzzle.
+     * If the answer is correct, the player is awarded points and the next puzzle is loaded. If the answer is incorrect, points are deducted and feedback is provided.
+     *
+     * @param userAnswer the user's submitted answer
+     * @param puzzle the current puzzle object
+     */
     private checkAnswer(userAnswer: any, puzzle: any) {
         let isCorrect = false;
 

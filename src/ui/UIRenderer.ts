@@ -61,6 +61,16 @@ export class UIRenderer {
         });
     }
 
+    /**
+     * Renders the puzzle interface based on its type and options
+     *
+     * @param puzzle    puzzle object containing the puzzle data
+     * @param points    current points of the player
+     * @param timeLeft  remaining time in seconds
+     * @param onAnswer  callback function - executed when the user submits an answer
+     * @param onHint    callback function - executed when the user requests a hint
+     * @param onBuyTime callback function - executed when the user buys extra time
+     */
     renderPuzzle(
         puzzle: any,
         points: number,
@@ -178,7 +188,12 @@ export class UIRenderer {
         });
     }
 
-    // live-update of timer & score without reloading the whole form
+    /**
+     * Live-update of timer & score without reloading the whole form
+     *
+     * @param points   current player score
+     * @param timeLeft time left in seconds
+     */
     updateStatusDisplay(points: number, timeLeft: number) {
         const pointsEl = document.getElementById('points-val');
         const timerEl = document.getElementById('timer-val');
@@ -186,20 +201,65 @@ export class UIRenderer {
         if (timerEl) timerEl.textContent = timeLeft.toString();
     }
 
-    renderVictory(points: number, onRestart: () => void) {
+    /**
+     * Renders the victory screen with the final score and highscores
+     *
+     * @param points     final player score
+     * @param highscores array of highscore entries
+     * @param onRestart  callback function - executed when the user wants to restart the game
+     */
+    renderVictory(points: number, highscores: Array<{ name: string; points: number; roomName: string; date: string }>, onRestart: () => void) {
+        const highscoreRows = highscores.map((entry, index) => `
+          <tr>
+            <td>#${index + 1}</td>
+            <td>${entry.name}</td>
+            <td>${entry.roomName}</td>
+            <td class="fw-bold text-success">${entry.points} Pkt</td>
+          </tr>
+        `).join('');
+
         this.appContainer.innerHTML = `
-            <div class="text-center py-4">
-                <h1 class="text-success fw-bold mb-3">🎉 Herzlichen Glückwunsch! 🎉</h1>
-                <p class="lead">Du hast alle Rätsel erfolgreich gelöst und den Escape Room bezwungen!</p>
-                <div class="alert alert-primary fs-4 my-4">
-                Dein Endstand: <strong>${points} Punkte</strong>
-                </div>
-                <button id="restart-btn" class="btn btn-primary btn-kid w-100">Noch einmal spielen 🔄</button>
+          <div class="text-center py-3">
+            <h1 class="text-success fw-bold mb-3">🎉 Herzlichen Glückwunsch! 🎉</h1>
+            <p class="lead">Du hast alle Rätsel erfolgreich gelöst!</p>
+
+            <div class="alert alert-primary fs-5 my-3">
+              Dein Endstand: <strong>${points} Punkte</strong>
             </div>
-            `;
-        document.getElementById('restart-btn')!.addEventListener('click', onRestart);
+
+            <div class="card bg-light border-0 p-3 mb-4 text-start shadow-sm">
+              <h4 class="h5 text-primary fw-bold text-center mb-3">🏆 Bestenliste (Top 5)</h4>
+              <table class="table table-sm table-striped mb-0">
+                <thead>
+                  <tr>
+                    <th>Rang</th>
+                    <th>Name</th>
+                    <th>Raum</th>
+                    <th>Punkte</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${highscoreRows.length > 0 ? highscoreRows : '<tr><td colspan="4" class="text-center text-muted">Noch keine Einträge</td></tr>'}
+                </tbody>
+              </table>
+            </div>
+
+            <button id="restart-btn" class="btn btn-primary btn-kid w-100 shadow">Noch einmal spielen 🔄</button>
+          </div>
+        `;
+
+        document.getElementById('restart-btn')!.addEventListener('click', () => {
+            onRestart();
+        });
     }
 
+    /**
+     * Renders feedback to the user based on their answer
+     *
+     * @param isCorrect indicates if the user's answer was correct
+     * @param message   feedback message to display
+     * @param onNext    callback function - executed when the user wants to proceed to the next puzzle
+     */
     renderFeedback(isCorrect: boolean, message: string, onNext: () => void) {
         const alertClass = isCorrect ? 'alert-success' : 'alert-danger';
         const title = isCorrect ? '🎉 Richtig!' : '❌ Leider falsch!';
