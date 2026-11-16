@@ -20,8 +20,9 @@ export class GameController {
     currentRoom = null;
     currentDifficulty = 'easy';
     currentPuzzleIndex = 0;
-    timeLeft = 90; // 90 seconds countdown timer
+    timeLeft = 90; // 90 seconds countdown timer over all puzzles
     timerInterval = null;
+    puzzleStartTime = 0; // timestamp when the current puzzle was loaded
     constructor() {
         this.renderer = new UIRenderer('app');
     }
@@ -99,13 +100,15 @@ export class GameController {
         // check if all puzzles of current room are solved
         if (this.currentPuzzleIndex >= puzzles.length) {
             clearInterval(this.timerInterval);
-            // Highscore speichern und aktualisierte Liste holen
+            // store highscore and get top scores for this room
             const topScores = HighscoreManager.addScore(this.player.name, this.player.points, this.currentRoom.name);
-            // Sieg-Screen mit Highscore-Tabelle rendern
+            // render victory-screen with highscore-table
             this.renderer.renderVictory(this.player.points, topScores, () => this.init());
             return;
         }
         const currentPuzzle = puzzles[this.currentPuzzleIndex];
+        // store timestamp for spezific puzzle
+        this.puzzleStartTime = Date.now();
         /**
          * Render the puzzle interface using the UIRenderer. The renderer is provided with the current puzzle data, player's points, remaining time, and callback functions for handling user actions such as submitting an answer, requesting a hint, or buying extra time.
          * The callbacks are defined inline and handle the corresponding game logic, such as checking the answer, updating points, and managing the timer.
@@ -159,9 +162,20 @@ export class GameController {
             isCorrect = cleanUserAnswer === cleanSolution;
         }
         if (isCorrect) {
-            this.player.addPoints(100);
-            // show feedback-box
-            this.renderer.renderFeedback(true, `${this.getSuccessConfirmationText() + ' *** 100 Punkte ***'}`, () => {
+            // calculate elapsed time in seconds for this puzzle
+            const secondsElapsed = (Date.now() - this.puzzleStartTime) / 1000;
+            // Linear formula:
+            // <= 5 s: 100 Points
+            // then linear decreasing down to 20 Points (@ max. 30 s)
+            let earnedPoints = 100;
+            if (secondsElapsed > 5) {
+                const maxTime = 30; // allowed time for puzzle
+                const timeFactor = Math.max(0, (maxTime - secondsElapsed) / (maxTime - 5));
+                earnedPoints = Math.round(20 + (80 * timeFactor));
+                earnedPoints = Math.max(20, Math.min(100, earnedPoints)); // limit values between 20 and 100
+            }
+            this.player.addPoints(earnedPoints);
+            this.renderer.renderFeedback(true, `${this.getSuccessConfirmationText()} *** ${earnedPoints} Punkte ***`, () => {
                 this.currentPuzzleIndex++;
                 this.loadCurrentPuzzle();
             });

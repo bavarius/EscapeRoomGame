@@ -11,13 +11,36 @@
             "name": "Das Tor der Glyphen",
             "type": "card_grid",
             "task": "Klicke die Tafeln in der Reihenfolge des Regenbogens an: Rot, Gelb, Grün, Blau.",
-            "hints": ["Erinnere dich an die klassischen Regenbogenfarben von oben nach unten!"],
-            "solution": ["Rot", "Gelb", "Grün", "Blau"],
+            "hints": [
+              "Erinnere dich an die klassischen Regenbogenfarben von oben nach unten!"
+            ],
+            "solution": [
+              "Rot",
+              "Gelb",
+              "Grün",
+              "Blau"
+            ],
             "options": [
-              { "id": "green", "name": "Grün", "image": "./dist/img/green.png" },
-              { "id": "blue", "name": "Blau", "image": "./dist/img/blue.png" },
-              { "id": "yellow", "name": "Gelb", "image": "./dist/img/yellow.png" },
-              { "id": "red", "name": "Rot", "image": "./dist/img/red.png" }
+              {
+                "id": "green",
+                "name": "Grün",
+                "image": "./dist/img/green.png"
+              },
+              {
+                "id": "blue",
+                "name": "Blau",
+                "image": "./dist/img/blue.png"
+              },
+              {
+                "id": "yellow",
+                "name": "Gelb",
+                "image": "./dist/img/yellow.png"
+              },
+              {
+                "id": "red",
+                "name": "Rot",
+                "image": "./dist/img/red.png"
+              }
             ]
           },
           {
@@ -25,16 +48,40 @@
             "name": "Die Zahlen-Eule",
             "type": "input_number",
             "task": "Nimm die Anzahl der geklickten Tafeln aus dem ersten Rätsel und ziehe 2 davon ab!",
-            "hints": ["Im 1. Rätsel hast du genau 4 Tafeln angeklickt. Rechne: 4 - 2 = ?"],
+            "hints": [
+              "Im 1. Rätsel hast du genau 4 Tafeln angeklickt. Rechne: 4 - 2 = ?"
+            ],
             "solution": "2"
           },
           {
             "id": "p3",
+            "name": "Das Geweih",
+            "type": "input_text",
+            "task": "Welches große, braune Tier mit einem Geweih ist der König des Waldes?",
+            "hints": [
+              "Es ist ein stolzes Tier mit Geweih."
+            ],
+            "solution": "HIRSCH"
+          },
+          {
+            "id": "p4",
+            "name": "Glücksklee auf der Lichtung",
+            "type": "input_number",
+            "task": "Wie viele Blätter hat ein klassisches Glücksklee-Blatt?",
+            "hints": [
+              "Die meisten Kleeblätte haben nur 3..."
+            ],
+            "solution": "4"
+          },
+          {
+            "id": "p5",
             "name": "Das Wortschloss",
             "type": "input_text",
-            "task": "Gib das Zauberwort ein. Tipp: Es lautet MAGIE gefolgt von dem Ergebnis aus Rätsel 2.",
-            "hints": ["Schreibe das Wort 'MAGIE' und direkt dahinter die Zahl 2."],
-            "solution": "MAGIE2"
+            "task": "Gib das Zauberwort ein. Tipp: Es lautet MAGIE gefolgt von dem Ergebnis aus dem vorherigen Rätsel.",
+            "hints": [
+              "Schreibe das Wort 'MAGIE' und direkt dahinter die Zahl 4."
+            ],
+            "solution": "MAGIE4"
           }
         ],
         "hard": [
@@ -43,13 +90,33 @@
             "name": "Das Meister-Runentor",
             "type": "card_grid",
             "task": "Welche Farbe entsteht, wenn man Blau und Gelb mischt? Klicke die richtige Tafel!",
-            "hints": ["Die Farbe entspricht der Farbe des Grases."],
-            "solution": ["Grün"],
+            "hints": [
+              "Die Farbe entspricht der Farbe des Grases."
+            ],
+            "solution": [
+              "Grün"
+            ],
             "options": [
-              { "id": "pink", "name": "Rosa", "image": "./dist/img/pink.png" },
-              { "id": "green", "name": "Grün", "image": "./dist/img/green.png" },
-              { "id": "black", "name": "Schwarz", "image": "./dist/img/black.png" },
-              { "id": "red", "name": "Rot", "image": "./dist/img/red.png" }
+              {
+                "id": "pink",
+                "name": "Rosa",
+                "image": "./dist/img/pink.png"
+              },
+              {
+                "id": "green",
+                "name": "Grün",
+                "image": "./dist/img/green.png"
+              },
+              {
+                "id": "black",
+                "name": "Schwarz",
+                "image": "./dist/img/black.png"
+              },
+              {
+                "id": "red",
+                "name": "Rot",
+                "image": "./dist/img/red.png"
+              }
             ]
           },
           {
@@ -57,7 +124,9 @@
             "name": "Rätsel der Waldspinne",
             "type": "input_number",
             "task": "Wie viele Beine hat eine Spinne?",
-            "hints": ["Es sind so ungefähr 2 weniger als Du Finger an beiden Händen zusammen hast."],
+            "hints": [
+              "Es sind so ungefähr 2 weniger als Du Finger an beiden Händen zusammen hast."
+            ],
             "solution": "8"
           },
           {
@@ -65,16 +134,30 @@
             "name": "Gib acht!",
             "type": "input_number",
             "task": "Wie viele Seiten hat ein Achteck?",
-            "hints": ["Es hat genauso viele Seiten wie es Ecken hat."],
+            "hints": [
+              "Es hat genauso viele Seiten wie es Ecken hat."
+            ],
             "solution": "8"
           },
           {
             "id": "ph4",
+            "name": "Junge Nussbäume",
+            "type": "input_number",
+            "task": "Wenn ein Eichhörnchen 12 Nüsse versteckt und die Hälfte vergisst, wie viele Nüsse wachsen im nächsten Jahr als Bäume nach?",
+            "hints": [
+              "Die Hälfte von 12!"
+            ],
+            "solution": "6"
+          },
+          {
+            "id": "ph5",
             "name": "Das magische Kryptogramm",
             "type": "input_text",
-            "task": "Nimm die beiden Zahlen aus den letzten Rätseln und multipliziere sie miteinander. Gib dann das ultimative Passwort ein: HEXEN gefolgt von der berechneten Zahl.",
-            "hints": ["Das Wort lautet HEXEN und die Zahl ist das Ergebnis von 8 * 8."],
-            "solution": "HEXEN64"
+            "task": "Nimm die beiden Zahlen aus den letzten Rätseln und multipliziere sie miteinander (6 * 8). Gib dann das ultimative Passwort ein: HEXEN gefolgt von der berechneten Zahl.",
+            "hints": [
+              "Das Wort lautet HEXEN und die Zahl ist das Ergebnis von 6 * 8."
+            ],
+            "solution": "HEXEN48"
           }
         ]
       }
@@ -90,13 +173,36 @@
             "name": "Die Muschel-Kette",
             "type": "card_grid",
             "task": "Klicke die Muscheln in dieser Farbfolge: Rosa, Blau, Gelb, Grün.",
-            "hints": ["Achte auf das Muster: Erst Rosa, dann Blau, dann Gelb, dann Grün."],
-            "solution": ["Rosa", "Blau", "Gelb", "Grün"],
+            "hints": [
+              "Achte auf das Muster: Erst Rosa, dann Blau, dann Gelb, dann Grün."
+            ],
+            "solution": [
+              "Rosa",
+              "Blau",
+              "Gelb",
+              "Grün"
+            ],
             "options": [
-              { "id": "green", "name": "Grün", "image": "./dist/img/shell_green.png" },
-              { "id": "blue", "name": "Blau", "image": "./dist/img/shell_blue.png" },
-              { "id": "yellow", "name": "Gelb", "image": "./dist/img/shell_yellow.png" },
-              { "id": "pink", "name": "Rosa", "image": "./dist/img/shell_pink.png" }
+              {
+                "id": "green",
+                "name": "Grün",
+                "image": "./dist/img/shell_green.png"
+              },
+              {
+                "id": "blue",
+                "name": "Blau",
+                "image": "./dist/img/shell_blue.png"
+              },
+              {
+                "id": "yellow",
+                "name": "Gelb",
+                "image": "./dist/img/shell_yellow.png"
+              },
+              {
+                "id": "pink",
+                "name": "Rosa",
+                "image": "./dist/img/shell_pink.png"
+              }
             ]
           },
           {
@@ -104,15 +210,39 @@
             "name": "Perlen-Mathematik",
             "type": "input_number",
             "task": "Nimm die Anzahl der Muscheln aus Rätsel 1 und verdopple sie.",
-            "hints": ["Es waren 4 Muscheln: Rechne 4 + 4."],
+            "hints": [
+              "Es waren 4 Muscheln: Rechne 4 + 4."
+            ],
             "solution": "8"
           },
           {
             "id": "u3",
+            "name": "Moby Dick",
+            "type": "input_text",
+            "task": "Welches große Meerestier atmet durch ein Blasloch auf dem Kopf und singt wunderschöne Lieder?",
+            "hints": [
+              "Pinocchio war in einem solchen tier gefangen."
+            ],
+            "solution": "WAL"
+          },
+          {
+            "id": "u4",
+            "name": "Oktopus",
+            "type": "input_number",
+            "task": "Wie viele Arme hat ein Oktopus?",
+            "hints": [
+              "Eine Spinne hat gleich viele Beine."
+            ],
+            "solution": "8"
+          },
+          {
+            "id": "u5",
             "name": "Die Schatzkiste",
             "type": "input_text",
-            "task": "Öffne das Schloss mit dem Wort SCHATZ und der Zahl aus Rätsel 2.",
-            "hints": ["Das Lösungswort ist SCHATZ8"],
+            "task": "Öffne das Schloss mit dem Wort SCHATZ und der Zahl aus dem vorherigen Rätsel.",
+            "hints": [
+              "Das Lösungswort ist SCHATZ8"
+            ],
             "solution": "SCHATZ8"
           }
         ],
@@ -122,13 +252,36 @@
             "name": "Der Kraken-Tanz",
             "type": "card_grid",
             "task": "Klicke die Symbole in dieser Reihenfolge: Grün, Rosa, Blau, Gelb.",
-            "hints": ["Vier Farben insgesamt. Beginne mit grün."],
-            "solution": ["Grün", "Rosa", "Blau", "Gelb"],
+            "hints": [
+              "Vier Farben insgesamt. Beginne mit grün."
+            ],
+            "solution": [
+              "Grün",
+              "Rosa",
+              "Blau",
+              "Gelb"
+            ],
             "options": [
-              { "id": "blue", "name": "Blau", "image": "./dist/img/blue.png" },
-              { "id": "pink", "name": "Rosa", "image": "./dist/img/pink.png" },
-              { "id": "green", "name": "Grün", "image": "./dist/img/green.png" },
-              { "id": "yellow", "name": "Gelb", "image": "./dist/img/yellow.png" }
+              {
+                "id": "blue",
+                "name": "Blau",
+                "image": "./dist/img/blue.png"
+              },
+              {
+                "id": "pink",
+                "name": "Rosa",
+                "image": "./dist/img/pink.png"
+              },
+              {
+                "id": "green",
+                "name": "Grün",
+                "image": "./dist/img/green.png"
+              },
+              {
+                "id": "yellow",
+                "name": "Gelb",
+                "image": "./dist/img/yellow.png"
+              }
             ]
           },
           {
@@ -136,24 +289,40 @@
             "name": "Mensch-ärgere-Dich-nicht für Meeresbewohner",
             "type": "input_number",
             "task": "Wie viele Seiten hat ein Würfel?",
-            "hints": ["Welche Zahlen kann man den würfeln? Zähle die Möglichkeiten!"],
+            "hints": [
+              "Welche Zahlen kann man denn würfeln? Zähle die Möglichkeiten!"
+            ],
             "solution": "6"
           },
           {
             "id": "uh3",
-            "name": "Der Oktopus-Arm",
+            "name": "Erfrischung unter Wasser",
             "type": "input_number",
-            "task": "Addiere 2 (= zähle dazu...) zur Zahl aus dem vorherigen Rätsel. Gib die Zahl hier ein!",
-            "hints": ["Die vorherige Zahl war 6: 6 + 2 = ?"],
-            "solution": "8"
+            "task": "Wie nennt man Wasser, wenn es gefroren ist?",
+            "hints": [
+              "Im Sommer kauft man sich gerne ... am Stiel."
+            ],
+            "solution": "EIS"
           },
           {
             "id": "uh4",
+            "name": "Der Oktopus-Arm",
+            "type": "input_number",
+            "task": "Multipliziere die 8 Arme des Oktopus mit den 6 Seiten eines Würfels (6 * 8).",
+            "hints": [
+              "Soviel wie 50 - 2"
+            ],
+            "solution": "48"
+          },
+          {
+            "id": "uh5",
             "name": "Königliche Schatztruhe",
             "type": "input_text",
             "task": "Passwort eingeben: PIRAT gefolgt von der Zahl aus dem vorherigen Rätsel.",
-            "hints": ["PIRAT8"],
-            "solution": "PIRAT8"
+            "hints": [
+              "PIRAT48"
+            ],
+            "solution": "PIRAT48"
           }
         ]
       }
@@ -169,28 +338,65 @@
             "name": "Sternen-Check",
             "type": "card_grid",
             "task": "Klicke die Lichter in der Reihenfolge: Gelb, Rot.",
-            "hints": ["Nur zwei Schritte: Erst Gelb, dann Rot."],
-            "solution": ["Gelb", "Rot"],
+            "hints": [
+              "Nur zwei Schritte: Erst Gelb, dann Rot."
+            ],
+            "solution": [
+              "Gelb",
+              "Rot"
+            ],
             "options": [
-              { "id": "red", "name": "Rot", "image": "./dist/img/red.png" },
-              { "id": "yellow", "name": "Gelb", "image": "./dist/img/yellow.png" }
+              {
+                "id": "red",
+                "name": "Rot",
+                "image": "./dist/img/red.png"
+              },
+              {
+                "id": "yellow",
+                "name": "Gelb",
+                "image": "./dist/img/yellow.png"
+              }
             ]
           },
           {
             "id": "s2",
             "name": "Roboter-Energie",
             "type": "input_number",
-            "task": "Nimm die Anzahl der Lichter und multipliziere sie mit 50. Gib die Antowrt hier ein!",
-            "hints": ["Es waren 2 Lichter. 2 * 50 = ?"],
+            "task": "Nimm die Anzahl der Lichter (2) und multipliziere sie mit 50!",
+            "hints": [
+              "Es waren 2 Lichter. 2 * 50 = ?"
+            ],
             "solution": "100"
           },
           {
             "id": "s3",
-            "name": "Hauptrechner-Code",
+            "name": "Mondphase",
             "type": "input_text",
-            "task": "Gib den Code ein: START plus das Ergebnis aus Rätsel 2.",
-            "hints": ["START100"],
-            "solution": "START100"
+            "task": "Welcher helle Sternenhimmel-Körper leuchtet nachts am Hellsten und erscheint oft als Sichel?",
+            "hints": [
+              "Da oben soll ein Mann wohnen."
+            ],
+            "solution": "MOND"
+          },
+          {
+            "id": "s4",
+            "name": "Spaziergang im Weltall",
+            "type": "input_number",
+            "task": "Ein Astronaut macht 3 Weltraumspaziergänge pro Woche. Wie viele macht er in 4 Wochen?",
+            "hints": [
+              "3 * 4 ist soviel wie 10 + 2."
+            ],
+            "solution": "12"
+          },
+          {
+            "id": "s5",
+            "name": "Wie öffne ich die Rakete?",
+            "type": "input_text",
+            "task": "Gib den Code ein: RAKETE plus das Ergebnis aus dem vorherigen Rätsel.",
+            "hints": [
+              "RAKETE12"
+            ],
+            "solution": "RAKETE12"
           }
         ],
         "hard": [
@@ -199,37 +405,76 @@
             "name": "Hyper-Antrieb Start",
             "type": "card_grid",
             "task": "Klicke in Reihenfolge: Rot, Gelb, Rot, Grün.",
-            "hints": ["Vier Farben zur Aktivierung."],
-            "solution": ["Rot", "Gelb", "Rot", "Grün"],
+            "hints": [
+              "Vier Farben zur Aktivierung."
+            ],
+            "solution": [
+              "Rot",
+              "Gelb",
+              "Rot",
+              "Grün"
+            ],
             "options": [
-              { "id": "yellow", "name": "Gelb", "image": "./dist/img/yellow.png" },
-              { "id": "green", "name": "Grün", "image": "./dist/img/green.png" },
-              { "id": "black", "name": "Schwarz", "image": "./dist/img/black.png" },
-              { "id": "red", "name": "Rot", "image": "./dist/img/red.png" }
+              {
+                "id": "yellow",
+                "name": "Gelb",
+                "image": "./dist/img/yellow.png"
+              },
+              {
+                "id": "green",
+                "name": "Grün",
+                "image": "./dist/img/green.png"
+              },
+              {
+                "id": "black",
+                "name": "Schwarz",
+                "image": "./dist/img/black.png"
+              },
+              {
+                "id": "red",
+                "name": "Rot",
+                "image": "./dist/img/red.png"
+              }
             ]
           },
           {
             "id": "sh2",
-            "name": "Schild-Energie",
-            "type": "input_number",
-            "task": "Multipliziere die Anzahl der Tasten aus Rätsel 1 mit 25.",
-            "hints": ["4 Tasten * 25."],
-            "solution": "100"
-          },
-          {
-            "id": "sh3",
             "name": "Gefühle im Raumschiff",
             "type": "input_text",
             "task": "Welches Organ pumpt Blut durch unseren Körper?",
-            "hints": ["Gern benutztes Emoji, wenn es um Liebe geht... - 4 Buchstaben!"],
+            "hints": [
+              "Gern benutztes Emoji, wenn es um Liebe geht... - 4 Buchstaben!"
+            ],
             "solution": "Herz"
           },
           {
+            "id": "sh3",
+            "name": "Der Erdball im Rückspiegel",
+            "type": "input_text",
+            "task": "Wie heißt der Planet, auf dem wir leben?",
+            "hints": [
+              "... zu ..., Staub zu Staub."
+            ],
+            "solution": "ERDE"
+          },
+          {
             "id": "sh4",
+            "name": "Schild-Energie",
+            "type": "input_number",
+            "task": "Multipliziere die Anzahl der 4 Tasten aus Rätsel 1 mit 25.",
+            "hints": [
+              "Rechne 4 * 25."
+            ],
+            "solution": "100"
+          },
+          {
+            "id": "sh5",
             "name": "Galaktisches Haupttor",
             "type": "input_text",
-            "task": "Passwort: GALAXY gefolgt von der Zahl aus Rätsel 2.",
-            "hints": ["GALAXY100"],
+            "task": "Passwort: GALAXY gefolgt von der Zahl aus dem vorherigen Rätsel (100).",
+            "hints": [
+              "GALAXY100"
+            ],
             "solution": "GALAXY100"
           }
         ]
@@ -246,13 +491,36 @@
             "name": "Die Köder-Auswahl",
             "type": "card_grid",
             "task": "Ein junger Angler bereitet sich vor. Klicke die Ausrüstungsgegenstände in dieser Reihenfolge an: Angelrute, Kescher, Schwimmer und Eimer.",
-            "hints": ["Starte mit der langen Rute, nimm dann das Netz zum Landen und zuletzt den kleinen bunten Schwimmer."],
-            "solution": ["Angelrute", "Kescher", "Schwimmer", "Eimer"],
+            "hints": [
+              "Starte mit der langen Rute, nimm dann das Netz zum Landen und zuletzt den kleinen bunten Schwimmer."
+            ],
+            "solution": [
+              "Angelrute",
+              "Kescher",
+              "Schwimmer",
+              "Eimer"
+            ],
             "options": [
-              { "id": "net", "name": "Kescher", "image": "./dist/img/net.png" },
-              { "id": "float", "name": "Schwimmer", "image": "./dist/img/float.png" },
-              { "id": "bucket", "name": "Eimer", "image": "./dist/img/bucket.png" },
-              { "id": "rod", "name": "Angelrute", "image": "./dist/img/rod.png" }
+              {
+                "id": "net",
+                "name": "Kescher",
+                "image": "./dist/img/net.png"
+              },
+              {
+                "id": "float",
+                "name": "Schwimmer",
+                "image": "./dist/img/float.png"
+              },
+              {
+                "id": "bucket",
+                "name": "Eimer",
+                "image": "./dist/img/bucket.png"
+              },
+              {
+                "id": "rod",
+                "name": "Angelrute",
+                "image": "./dist/img/rod.png"
+              }
             ]
           },
           {
@@ -260,15 +528,39 @@
             "name": "Der gefräßige Räuber",
             "type": "input_text",
             "task": "Ich habe ein langes Maul wie ein Entenschnabel, sehr scharfe Zähne und lauere im Schilf auf Beute. Welcher heimische Raubfisch bin ich?",
-            "hints": ["Mein Name beginnt mit einem 'H' und reimt sich auf 'echt'."],
+            "hints": [
+              "Mein Name beginnt mit einem 'H' und reimt sich auf 'echt'."
+            ],
             "solution": "HECHT"
           },
           {
             "id": "f3",
+            "name": "Aqua überall",
+            "type": "input_text",
+            "task": "Wie heißt das kühle Nass im See? Es beginnt mit einem 'W'.",
+            "hints": [
+              "WASSER"
+            ],
+            "solution": "WASSER"
+          },
+          {
+            "id": "f4",
+            "name": "Es springt und quakt.",
+            "type": "input_text",
+            "task": "Welcher kleine, grüne Wasserbewohner, der auf Steinen sitzt, kann sehr weit hüpfen und ruft 'Quak'?",
+            "hints": [
+              "FROSCH"
+            ],
+            "solution": "FROSCH"
+          },
+          {
+            "id": "f5",
             "name": "Flossen-Rechnen am Teich",
             "type": "input_number",
             "task": "Du hast im ersten Rätsel 4 Ausrüstungsgegenstände benutzt. Am Ufer schwimmen genau so viele Karpfen vorbei, und jeder Karpfen hat 2 Brustflossen. Wie viele Brustflossen siehst du insgesamt?",
-            "hints": ["Rechne die Anzahl der Gegenstände aus Rätsel 1 (4) mal 2."],
+            "hints": [
+              "Rechne die Anzahl der Gegenstände aus Rätsel 1 (4) mal 2."
+            ],
             "solution": "8"
           }
         ],
@@ -278,13 +570,36 @@
             "name": "Vom Ufer in die Tiefe",
             "type": "card_grid",
             "task": "Ordne diese vier heimischen Fische danach, wo sie sich am liebsten aufhalten – von oben an der Wasseroberfläche bis ganz hinunter an den Gewässergrund: Laube (Oberfläche), Barsch (Mittelwasser), Karpfen (Bodennähe), Aal (Schlammgrund).",
-            "hints": ["Beginne mit dem kleinen silbernen Oberflächenfisch und höre mit dem schlangenförmigen Grundfisch auf."],
-            "solution": ["Laube", "Barsch", "Karpfen", "Aal"],
+            "hints": [
+              "Beginne mit dem kleinen silbernen Oberflächenfisch und höre mit dem schlangenförmigen Grundfisch auf."
+            ],
+            "solution": [
+              "Laube",
+              "Barsch",
+              "Karpfen",
+              "Aal"
+            ],
             "options": [
-              { "id": "carp", "name": "Karpfen", "image": "./dist/img/Karpfen.png" },
-              { "id": "bleak", "name": "Laube", "image": "./dist/img/Laube.png" },
-              { "id": "eel", "name": "Aal", "image": "./dist/img/Aal.png" },
-              { "id": "perch", "name": "Barsch", "image": "./dist/img/Barsch.png" }
+              {
+                "id": "carp",
+                "name": "Karpfen",
+                "image": "./dist/img/Karpfen.png"
+              },
+              {
+                "id": "bleak",
+                "name": "Laube",
+                "image": "./dist/img/Laube.png"
+              },
+              {
+                "id": "eel",
+                "name": "Aal",
+                "image": "./dist/img/Aal.png"
+              },
+              {
+                "id": "perch",
+                "name": "Barsch",
+                "image": "./dist/img/Barsch.png"
+              }
             ]
           },
           {
@@ -292,16 +607,205 @@
             "name": "Barteln am Gewässergrund",
             "type": "input_number",
             "task": "Der Karpfen aus Rätsel 1 sucht mit seinen Barteln am Boden nach Nahrung. Er besitzt 4 Barteln am Maul. Multipliziere die Anzahl seiner Barteln mit der Anzahl der Fische aus Rätsel 1!",
-            "hints": ["In Rätsel 1 waren es 4 Fische. Rechne 4 Barteln mal 4 Fische."],
+            "hints": [
+              "In Rätsel 1 waren es 4 Fische. Rechne 4 Barteln mal 4 Fische."
+            ],
             "solution": "16"
           },
           {
             "id": "fh3",
+            "name": "",
+            "type": "input_text",
+            "task": "Wie heißt das was am Haken hängt? Es soll den Fisch anlocken.",
+            "hints": [
+              "Der Fisch wird damit ge[KÖDER]t."
+            ],
+            "solution": "KÖDER"
+          },
+          {
+            "id": "fh4",
+            "name": "Mit Enten muss man rechnen.",
+            "type": "input_number",
+            "task": "Wenn 5 Enten auf dem See schwimmen und jede 2 Flügel hat, wie viele Entenflügel sind das zusammen?",
+            "hints": [
+              "Rechne 5 * 2!"
+            ],
+            "solution": "10"
+          },
+          {
+            "id": "fh5",
             "name": "Der König der Gebirgsbäche",
             "type": "input_text",
-            "task": "Ich liebe klares, sauerstoffreiches Wasser, habe rote Punkte mit hellem Rand auf den Flanken und bin ein begehrter Edelfisch. Gib meinen Namen zusammen mit der Zahl aus Rätsel 2 als Code ein (Beispiel: FISCH10)!",
-            "hints": ["Gesucht ist die (Bach)FORELLE und die Zahl 16 aus dem vorherigen Rätsel."],
-            "solution": "FORELLE16"
+            "task": "Ich liebe klares, sauerstoffreiches Wasser, habe rote Punkte mit hellem Rand auf den Flanken und bin ein begehrter Edelfisch. Gib meinen Namen zusammen mit der Zahl aus dem vorherigen Rätsel als Code ein (Beispiel: FISCH10)!",
+            "hints": [
+              "Gesucht ist die (Bach)FORELLE und die Zahl aus dem vorherigen Rätsel."
+            ],
+            "solution": "FORELLE10"
+          }
+        ]
+      }
+    },
+    {
+      "id": "magic-boutique",
+      "name": "👗 Die Zauber-Boutique",
+      "description": "Willkommen in der glitzernden Mode-Boutique! Stelle das perfekte Outfit und Make-up für die Modenschau zusammen.",
+      "difficulties": {
+        "easy": [
+          {
+            "id": "b1",
+            "name": "Das Ankleide-Regal",
+            "type": "card_grid",
+            "task": "Wähle die Kleidungsstücke in der richtigen Reihenfolge aus: Erst das glitzernde Kleid, dann die Haarschleife, die Handschuhe und zum Schluss die Schuhe.",
+            "hints": [
+              "Beginne mit dem Hauptkleidungsstück, nimm dann den Haarschmuck, die Handschuhe und zum Schluss die Schuhe."
+            ],
+            "solution": [
+              "Kleid",
+              "Haarschleife",
+              "Handschuhe",
+              "Schuhe"
+            ],
+            "options": [
+              {
+                "id": "shoes",
+                "name": "Schuhe",
+                "image": "./dist/img/shoes.png"
+              },
+              {
+                "id": "dress",
+                "name": "Kleid",
+                "image": "./dist/img/dress.png"
+              },
+              {
+                "id": "gloves",
+                "name": "Handschuhe",
+                "image": "./dist/img/gloves.png"
+              },
+              {
+                "id": "ribbon",
+                "name": "Haarschleife",
+                "image": "./dist/img/ribbon.png"
+              }
+            ]
+          },
+          {
+            "id": "b2",
+            "name": "Der Farbige Nagellack",
+            "type": "input_text",
+            "task": "Welche Farbe hat der klassische Lack für rote Rosen oder Erdbeeren, den man sich auf die Nägel malen kann? Gib den Namen der Farbe ein.",
+            "hints": [
+              "Es ist die Farbe der Liebe und von Erdbeeren."
+            ],
+            "solution": "ROT"
+          },
+          {
+            "id": "b3",
+            "name": "Armband-Perlen Zählen",
+            "type": "input_number",
+            "task": "Du bastelst ein Freundschaftsarmband. Du nimmst 4 pinke Perlen und 3 glitzernde Sternchen-Perlen. Wie viele Perlen hängen insgesamt am Armband?",
+            "hints": [
+              "Rechne 4 pinke Perlen plus 3 Sternchen-Perlen zusammen."
+            ],
+            "solution": "7"
+          },
+          {
+            "id": "b4",
+            "name": "Die Duft-Flasche",
+            "type": "input_text",
+            "task": "Wie nennt man ein wunderbar duftendes Wasser in einer schönen Glasflasche, das man sich leicht aufsprühen kann?",
+            "hints": [
+              "Das Wort beginnt mit 'P' und endet mit 'um' (Parf...)."
+            ],
+            "solution": "PARFUM"
+          },
+          {
+            "id": "b5",
+            "name": "Das große Finale",
+            "type": "input_text",
+            "task": "Gib das magische Passwort für die Modenschau ein: STYLE gefolgt von der Zahl 7 (aus Rätsel 3).",
+            "hints": [
+              "Schreibe das Wort STYLE und hänge die Ziffer 7 direkt an."
+            ],
+            "solution": "STYLE7"
+          }
+        ],
+        "hard": [
+          {
+            "id": "bh1",
+            "name": "Das Profi-Styling-Set",
+            "type": "card_grid",
+            "task": "Ordne die Styling-Accessoires vom Kopf bis zu den Füßen an: 1. Sonnenbrille, 2. Kette, 3. Gürtel, 4. Handtasche.",
+            "hints": [
+              "Starte ganz oben im Gesicht mit dem Sonnenschutz und arbeite dich nach unten bis zur Tasche vor."
+            ],
+            "solution": [
+              "Sonnenbrille",
+              "Kette",
+              "Gürtel",
+              "Handtasche"
+            ],
+            "options": [
+              {
+                "id": "belt",
+                "name": "Gürtel",
+                "image": "./dist/img/belt.png"
+              },
+              {
+                "id": "sunglasses",
+                "name": "Sonnenbrille",
+                "image": "./dist/img/sunglasses.png"
+              },
+              {
+                "id": "handbag",
+                "name": "Handtasche",
+                "image": "./dist/img/handbag.png"
+              },
+              {
+                "id": "necklace",
+                "name": "Kette",
+                "image": "./dist/img/necklace.png"
+              }
+            ]
+          },
+          {
+            "id": "bh2",
+            "name": "Modenschau-Mathematik",
+            "type": "input_number",
+            "task": "In der Boutique hängen 6 Kleiderständer. An jedem Ständer hängen jeweils 8 Röcke. Wie viele Röcke hängen insgesamt in der Boutique?",
+            "hints": [
+              "Multipliziere: 6 mal 8."
+            ],
+            "solution": "48"
+          },
+          {
+            "id": "bh3",
+            "name": "Der Spiegel der Wahrheit",
+            "type": "input_text",
+            "task": "Wie heißt ein hoher Spiegel, der fest auf dem Boden steht, damit man sein ganzes Outfit sieht? (Ein Wort)",
+            "hints": [
+              "Das Wort fängt mit 'S' an und beschreibt einen Spiegel zum Hinstellen (Stand...)."
+            ],
+            "solution": "STANDSPIEGEL"
+          },
+          {
+            "id": "bh4",
+            "name": "Accessoires-Kombination",
+            "type": "input_number",
+            "task": "Nimm die Anzahl der Kleiderständer aus Rätsel 2 (6) und addiere die Anzahl der Accessoires-Kategorien aus Rätsel 1 (4) dazu. Multipliziere das Ergebnis mit 5.",
+            "hints": [
+              "Rechne zuerst (6 + 4) = 10 und nimm das mal 5."
+            ],
+            "solution": "50"
+          },
+          {
+            "id": "bh5",
+            "name": "Das Haute-Couture-Geheimnis",
+            "type": "input_text",
+            "task": "Gib das finale Meister-Passwort ein: GLANZ gefolgt von der Zahl 50 (aus Rätsel 4).",
+            "hints": [
+              "Schreibe GLANZ und die Zahl 50 zusammen."
+            ],
+            "solution": "GLANZ50"
           }
         ]
       }

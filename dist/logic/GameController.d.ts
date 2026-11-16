@@ -11,6 +11,7 @@ export declare class GameController {
     private currentPuzzleIndex;
     private timeLeft;
     private timerInterval;
+    private puzzleStartTime;
     constructor();
     /**
      * Initializes the game by loading room data and rendering the start screen.
