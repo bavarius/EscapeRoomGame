@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "bootstrap": "^5.3.8",
-    "dev-server": "^0.2.0"
+    "dev-server": "^0.2.0",
+    "typescript": "^7.0.2"
   }
 }

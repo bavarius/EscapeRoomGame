@@ -27,27 +27,27 @@ Ein interaktives, kinderfreundliches Solo-Escape-Room-Spiel für den Browser, en
 ## 📁 Projektstruktur
 
 ```text
-├── favicon.ico                  # Das Spiel-Icon
-├── index.html                   # Hauptseite (HTML5 + Bootstrap CDN)
-├── package-lock.json            # Projekt-Konfiguration
-├── package.json                 # Projekt-Konfiguration & Skripte
-├── README.md                    # Diese Datei
-├── tsconfig.json                # TypeScript Compiler-Optionen
-├── dist/                        # Kompilierte JavaScript-Dateien (wird von tsc generiert)
-|   ├── img/                     # Bilder der Website
-|   └── scss/
-|       └── styles.scss          # Eigene SASS-Styles & Bootstrap Anpassungen
-└── src/
-    main.ts
-    ├── data
-    |   └── rooms.json           # Die 5 Spielräume
-    ├── logic/
-    |   ├── GameController.ts    # Die Haupt-Spiellogik
-    |   └── HighscoreManager.ts  # Highscore-Verwaltung
-    ├── models/
-    │   └── Player.ts            # Spieler-Datenmodell (Name, Punkte)
-    ├── ui/
-    │   └── UIRenderer.ts        # DOM-Manipulation & UI-Darstellung
-    ├── data/
-    │   └── rooms.json           # JSON-Datei mit allen Räumen & Rätseln
-    └── main.ts                  # Haupteinstiegspunkt & Spiel-Controller
+│   favicon.ico                  # Das Spiel-Icon
+│   index.html                   # Hauptseite (HTML5 + Bootstrap CDN)
+│   package-lock.json            # Projekt-Konfiguration
+│   package.json                 # Projekt-Konfiguration & Skripte
+│   README.md                    # Diese Datei
+│   tsconfig.json                # TypeScript Compiler-Optionen
+├───dist                         # Kompilierte JavaScript-Dateien (von tsc generiert)
+│   ├───img                      # Bilder der Website
+│   │       *.png
+│   └───scss
+│           styles.css           # von SASS kompiliertes Stylesheet
+│           styles.scss          # Eigene SASS-Styles & Bootstrap Anpassungen
+└───src
+    │   main.ts                  # Der Programmeinsprungpunkt
+    ├───data
+    │       rooms.json           # Die 5 Spielräume
+    ├───logic
+    │       GameController.ts    # Die Haupt-Spiellogik
+    │       HighscoreManager.ts  # Highscore-Verwaltung
+    ├───models
+    │       Player.ts            # Spieler-Datenmodell (Name, Punkte)
+    └───ui
+            UIRenderer.ts        # DOM-Manipulation & UI-Darstellung
+```

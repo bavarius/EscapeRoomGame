@@ -36,7 +36,7 @@ export class GameController {
      */
     async init() {
         try {
-            const response = await fetch('./src/data/rooms.json');
+            const response = await fetch('./dist/data/rooms.json');
             if (!response.ok)
                 throw new Error("Konnte rooms.json nicht laden");
             const data = await response.json();
